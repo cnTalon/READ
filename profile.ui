@@ -24,45 +24,30 @@
    </property>
    <property name="styleSheet">
     <string notr="true">QWidget#bgwidget{
-background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379, y2:0.977, stop:0 rgba(255, 183, 119), stop:1 rgba(255, 255, 255, 255));}</string>
+background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379, y2:0.977, stop:0 rgba(255, 183, 119), stop:1 rgba(255, 255, 255, 255));}
+</string>
    </property>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>110</y>
-      <width>171</width>
+      <x>80</x>
+      <y>50</y>
+      <width>401</width>
       <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 36pt &quot;MS Shell Dlg 2&quot;; color:rgb(255, 255, 255)</string>
+     <string notr="true">font: 36pt &quot;MS Shell Dlg 2&quot;; color:rgb(0,0,0)</string>
     </property>
     <property name="text">
-     <string>Sign up</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>200</y>
-      <width>291</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 16pt &quot;MS Shell Dlg 2&quot;;color:rgb(255, 255, 255)</string>
-    </property>
-    <property name="text">
-     <string>Create a brand new account</string>
+     <string>Create your profile</string>
     </property>
    </widget>
    <widget class="QPushButton" name="signup">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>570</y>
+      <x>430</x>
+      <y>510</y>
       <width>341</width>
       <height>51</height>
      </rect>
@@ -73,40 +58,42 @@ background-color: rgb(170, 255, 255);
 font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
     </property>
     <property name="text">
-     <string>Sign up</string>
+     <string>Continue</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="emailField">
+   <widget class="QLineEdit" name="username">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>290</y>
+      <x>180</x>
+      <y>230</y>
       <width>341</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
+     <string notr="true">
+font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="passwordField">
+   <widget class="QLineEdit" name="firstname">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>390</y>
+      <x>180</x>
+      <y>310</y>
       <width>341</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
+     <string notr="true">
+font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>270</y>
+      <x>80</x>
+      <y>230</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -130,8 +117,8 @@ font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>370</y>
+      <x>80</x>
+      <y>310</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -140,21 +127,20 @@ font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
      <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
     </property>
     <property name="text">
-     <string>Password</string>
+     <string>First Name</string>
     </property>
    </widget>
-   <widget class="QLabel" name="errorMsg">
+   <widget class="QLabel" name="error">
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>540</y>
+      <y>456</y>
       <width>341</width>
       <height>20</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">color:red;
-font: 10pt &quot;DengXian&quot;;</string>
+     <string notr="true">font: 12pt &quot;MS Shell Dlg 2&quot;; color:red;</string>
     </property>
     <property name="text">
      <string/>
@@ -163,9 +149,9 @@ font: 10pt &quot;DengXian&quot;;</string>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>470</y>
-      <width>141</width>
+      <x>580</x>
+      <y>310</y>
+      <width>81</width>
       <height>20</height>
      </rect>
     </property>
@@ -173,24 +159,107 @@ font: 10pt &quot;DengXian&quot;;</string>
      <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
     </property>
     <property name="text">
-     <string>Confirm Password</string>
+     <string>Last Name</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="confirmpasswordfield">
+   <widget class="QLineEdit" name="lastname">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>490</y>
+      <x>680</x>
+      <y>310</y>
       <width>341</width>
       <height>51</height>
      </rect>
     </property>
     <property name="styleSheet">
+     <string notr="true">
+font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
+    </property>
+   </widget>
+   <widget class="QDateEdit" name="birthday">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>390</y>
+      <width>341</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">
+font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>390</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
      <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Birthday</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="occupation">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>390</y>
+      <width>121</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">
+font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
+    </property>
+    <item>
+     <property name="text">
+      <string/>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>General User</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Student</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Teacher</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>390</y>
+      <width>81</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Occupation</string>
     </property>
    </widget>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="default.qrc"/>
+ </resources>
  <connections/>
 </ui>

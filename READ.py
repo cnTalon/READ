@@ -1,9 +1,12 @@
 import sys
+from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QDialog, QApplication, QWidget
 from PyQt5.QtGui import QPixmap
 import pyrebase
+
+# bg colour rgb(255, 183, 119)
 
 firebaseConfig = {
     'apiKey' : "AIzaSyCjtWMuOcd3_DlltUN9CQT8cOCCZoKFpKA",
@@ -45,16 +48,16 @@ class LoginScreen(QDialog):
         
 
     def loginfunction(self):
-        user = self.emailField.text()
+        email = self.emailField.text()
         password = self.passwordField.text()
 
-        if len(user)==0 or len(password)==0:
+        if len(email)==0 or len(password)==0:
             self.errorMsg.setVisible(True)
             self.errorMsg.setText("Please input all fields.")
 
         else:
             try:
-                auth.sign_in_with_email_and_password(user, password)
+                auth.sign_in_with_email_and_password(email, password)
                 print("Login successful")
             except:
                 self.errorMsg.setVisible(True)
@@ -70,37 +73,50 @@ class CreateAccScreen(QDialog):
 
     def createAcc(self):
         # extracts the text from the fields
-        user = self.emailField.text()
+        email = self.emailField.text()
         password = self.passwordField.text()
         confirmpassword = self.confirmpasswordfield.text()
 
         # error checking
-        if len(user) == 0 or len(password) == 0 or len(confirmpassword) == 0:
+        if len(email) == 0 or len(password) == 0 or len(confirmpassword) == 0:
             self.errorMsg.setText("Please fill in all inputs.")
 
         elif password != confirmpassword:
             self.errorMsg.setText("Passwords do not match.")
         else:
             try:
-                auth.create_user_with_email_and_password(user, password)
+                auth.create_user_with_email_and_password(email, password)
             except:
                 if len(password) < 6:
                     self.errorMsg.setText("Minimum 6 character password!")
                 else:
                     self.errorMsg.setText("Invalid username!")
-            login = LoginScreen()
-            widget.addWidget(login)
+            profile = FillProfileScreen()
+            widget.addWidget(profile)
             widget.setCurrentIndex(widget.currentIndex() + 1)
-
-            #fillprofile = FillProfileScreen()
-            #widget.addWidget(fillprofile)
-            #widget.setCurrentIndex(widget.currentIndex()+1)
 
 class FillProfileScreen(QDialog):
     def __init__(self):
         super(FillProfileScreen, self).__init__()
-        loadUi("fillprofile.ui",self)
-        self.image.setPixmap(QPixmap('placeholder.png'))
+        loadUi("profile.ui",self)
+        self.signup.clicked.connect(self.profileSetUp)
+
+    def profileSetUp(self):
+        user = self.username.text()
+        first = self.firstname.text()
+        last = self.lastname.text()
+        birth = self.birthday.text()
+        job = self.occupation.currentText()
+
+        if job == "Teacher":
+            verification = confirmID()
+            widget.addWidget(verification)
+            widget.setCurrentIndex(widget.currentIndex() + 1)
+
+class confirmID(QDialog):
+    def __init__(self):
+        super(confirmID, self).__init__()
+        loadUi("teacher.ui", self)
 
 # main
 app = QApplication(sys.argv)
