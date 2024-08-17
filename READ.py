@@ -3,7 +3,6 @@ from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QDialog, QApplication, QWidget
 from PyQt5.QtGui import QPixmap
-
 import pyrebase
 
 firebaseConfig = {
@@ -14,7 +13,7 @@ firebaseConfig = {
     'messagingSenderId' : "537453362920",
     'appId' : "1:537453362920:web:d83cc5701179f21ba7135d",
     'measurementId' : "G-0PEX43W7DW",
-    'databaseURL' : "",
+    'databaseURL' : "https://read-cd3f3-default-rtdb.europe-west1.firebasedatabase.app/",
 }
 
 firebase = pyrebase.initialize_app(firebaseConfig)
@@ -56,20 +55,10 @@ class LoginScreen(QDialog):
         else:
             try:
                 auth.sign_in_with_email_and_password(user, password)
+                print("Login successful")
             except:
                 self.errorMsg.setVisible(True)
                 self.errorMsg.setText("Invalid username or password!")
-
-            #conn = firebase.connect("shop_data.db")
-            #cur = conn.cursor()
-            #query = 'SELECT password FROM login_info WHERE username =\''+user+"\'"
-            #cur.execute(query)
-            #result_pass = cur.fetchone()[0]
-            #if result_pass == password:
-            #    print("Successfully logged in.")
-            #    self.errorMsg.setText("")
-            #else:
-            #    self.errorMsg.setText("Invalid username or password")
 
 class CreateAccScreen(QDialog):
     def __init__(self):
@@ -77,51 +66,41 @@ class CreateAccScreen(QDialog):
         loadUi("signup.ui",self)
         self.passwordField.setEchoMode(QtWidgets.QLineEdit.Password)
         self.confirmpasswordfield.setEchoMode(QtWidgets.QLineEdit.Password)
-        self.signup.clicked.connect(self.signupfunction)
+        self.signup.clicked.connect(self.createAcc)
 
     def createAcc(self):
-        email = self.email.text()
-        if self.password.text() == self.confirmpass.text():
-            password = self.password.text()
-            try:
-                auth.create_user_with_email_and_password(email, password)
-            except:
-                print("Invalid email")
-            login = login()
-            widget.addWidget(login)
-            widget.setCurrentIndex(widget.currentIndex() + 1)
-
-    def signupfunction(self):
+        # extracts the text from the fields
         user = self.emailField.text()
         password = self.passwordField.text()
         confirmpassword = self.confirmpasswordfield.text()
 
-        if len(user)==0 or len(password)==0 or len(confirmpassword)==0:
+        # error checking
+        if len(user) == 0 or len(password) == 0 or len(confirmpassword) == 0:
             self.errorMsg.setText("Please fill in all inputs.")
 
-        elif password!=confirmpassword:
+        elif password != confirmpassword:
             self.errorMsg.setText("Passwords do not match.")
         else:
-            conn = firebase.connect("shop_data.db")
-            cur = conn.cursor()
+            try:
+                auth.create_user_with_email_and_password(user, password)
+            except:
+                if len(password) < 6:
+                    self.errorMsg.setText("Minimum 6 character password!")
+                else:
+                    self.errorMsg.setText("Invalid username!")
+            login = LoginScreen()
+            widget.addWidget(login)
+            widget.setCurrentIndex(widget.currentIndex() + 1)
 
-            user_info = [user, password]
-            cur.execute('INSERT INTO login_info (username, password) VALUES (?,?)', user_info)
-
-            conn.commit()
-            conn.close()
-
-            fillprofile = FillProfileScreen()
-            widget.addWidget(fillprofile)
-            widget.setCurrentIndex(widget.currentIndex()+1)
+            #fillprofile = FillProfileScreen()
+            #widget.addWidget(fillprofile)
+            #widget.setCurrentIndex(widget.currentIndex()+1)
 
 class FillProfileScreen(QDialog):
     def __init__(self):
         super(FillProfileScreen, self).__init__()
         loadUi("fillprofile.ui",self)
         self.image.setPixmap(QPixmap('placeholder.png'))
-
-
 
 # main
 app = QApplication(sys.argv)
