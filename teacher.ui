@@ -24,20 +24,21 @@
    </property>
    <property name="styleSheet">
     <string notr="true">QWidget#bgwidget{
-background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379, y2:0.977, stop:0 rgba(255, 183, 119), stop:1 rgba(255, 255, 255, 255));}
+background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379, y2:0.977, stop:0 rgb(255, 183, 119), stop:1 rgba(255, 255, 255, 255));}
 </string>
    </property>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>380</x>
       <y>60</y>
       <width>451</width>
       <height>71</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 36pt &quot;MS Shell Dlg 2&quot;; color:rgb(0,0,0)</string>
+     <string notr="true">
+font: 36pt &quot;DengXian&quot;; color:rgb(0,0,0)</string>
     </property>
     <property name="text">
      <string>Confirm your identity</string>
@@ -47,7 +48,7 @@ background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379,
     <property name="geometry">
      <rect>
       <x>430</x>
-      <y>570</y>
+      <y>590</y>
       <width>341</width>
       <height>51</height>
      </rect>
@@ -55,7 +56,7 @@ background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379,
     <property name="styleSheet">
      <string notr="true">border-radius:20px;
 background-color: rgb(170, 255, 255);
-font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
+font: 14pt &quot;DengXian&quot;;</string>
     </property>
     <property name="text">
      <string>Continue</string>
@@ -238,6 +239,23 @@ font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
       <string>Cape Penisula University of Technology</string>
      </property>
     </item>
+   </widget>
+   <widget class="QLabel" name="errorMsg">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>560</y>
+      <width>341</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">
+font: 10pt &quot;DengXian&quot;; color: rgb(255, 0, 0)</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
    </widget>
   </widget>
  </widget>

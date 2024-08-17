@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1200</width>
-    <height>800</height>
+    <height>802</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,69 +29,85 @@ background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379,
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>510</x>
-      <y>120</y>
-      <width>201</width>
+      <x>320</x>
+      <y>150</y>
+      <width>581</width>
       <height>61</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 36pt &quot;MS Shell Dlg 2&quot;; color: rgb(0, 0, 0)</string>
+     <string notr="true">font: 36pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
     </property>
     <property name="text">
-     <string>Welcome</string>
+     <string>What would you like to do?</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="profile">
     <property name="geometry">
      <rect>
-      <x>460</x>
-      <y>200</y>
-      <width>311</width>
+      <x>1010</x>
+      <y>20</y>
+      <width>171</width>
       <height>41</height>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">font: 16pt &quot;MS Shell Dlg 2&quot;;color:rgb(0,0,0)</string>
+     <string notr="true">font: 18pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
     </property>
     <property name="text">
-     <string>Sign in or create a new account</string>
+     <string>Username Here</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="login">
+   <widget class="QPushButton" name="read">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>390</y>
-      <width>341</width>
-      <height>51</height>
+      <x>190</x>
+      <y>280</y>
+      <width>271</width>
+      <height>241</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">border-radius:20px;
 background-color: rgb(170, 255, 255);
-font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
+font: 14pt &quot;DengXian&quot;;</string>
     </property>
     <property name="text">
-     <string>Log in</string>
+     <string>Read Story</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="create">
+   <widget class="QLabel" name="errorMsg">
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>480</y>
+      <y>450</y>
       <width>341</width>
-      <height>51</height>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DengXian&quot;; color :red;</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="stats">
+    <property name="geometry">
+     <rect>
+      <x>740</x>
+      <y>280</y>
+      <width>271</width>
+      <height>241</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">border-radius:20px;
 background-color: rgb(170, 255, 255);
-font: 14pt &quot;MS Shell Dlg 2&quot;;</string>
+font: 14pt &quot;DengXian&quot;;</string>
     </property>
     <property name="text">
-     <string>Create a new account</string>
+     <string>View Statistics</string>
     </property>
    </widget>
   </widget>

@@ -56,12 +56,21 @@ class LoginScreen(QDialog):
             self.errorMsg.setText("Please input all fields.")
 
         else:
-            try:
-                auth.sign_in_with_email_and_password(email, password)
-                print("Login successful")
-            except:
-                self.errorMsg.setVisible(True)
-                self.errorMsg.setText("Invalid username or password!")
+            if email == "admin@mail.com":
+                try:
+                    auth.sign_in_with_email_and_password(email, password)
+                except:
+                    self.errorMsg.setText("Incorrect password!")
+                admin = adminHome()
+                widget.addWidget(admin)
+                widget.setCurrentIndex(widget.currentIndex() + 1)
+            else:
+                try:
+                    auth.sign_in_with_email_and_password(email, password)
+                    print("Login successful")
+                except:
+                    self.errorMsg.setVisible(True)
+                    self.errorMsg.setText("Invalid username or password!")
 
 class CreateAccScreen(QDialog):
     def __init__(self):
@@ -117,6 +126,27 @@ class confirmID(QDialog):
     def __init__(self):
         super(confirmID, self).__init__()
         loadUi("teacher.ui", self)
+        self.signup.clicked.connect(self.confirm)
+
+    def confirm(self):
+        teacherID = self.teacherID.text()
+
+        if teacherID == "T000":
+            print("real")
+        else:
+            self.errorMsg.setText("Invalid TeacherID.")
+
+class homeScreen(QDialog):
+    def __init__(self):
+        super(homeScreen, self).__init__()
+        loadUi("home.ui", self)
+        # insert selection code
+
+class adminHome(QDialog):
+    def __init__(self):
+        super(adminHome, self).__init__()
+        loadUi("adminHome.ui", self)
+        # insert selection code
 
 # main
 app = QApplication(sys.argv)
