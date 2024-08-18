@@ -121,6 +121,10 @@ class FillProfileScreen(QDialog):
             verification = confirmID()
             widget.addWidget(verification)
             widget.setCurrentIndex(widget.currentIndex() + 1)
+        else:
+            home = homeScreen()
+            widget.addWidget(home)
+            widget.setCurrentIndex(widget.currentIndex() + 1)
 
 class confirmID(QDialog):
     def __init__(self):
@@ -140,13 +144,36 @@ class homeScreen(QDialog):
     def __init__(self):
         super(homeScreen, self).__init__()
         loadUi("home.ui", self)
+        self.read.clicked.connect(self.readButton)
+        self.stats.clicked.connect(self.statsButton)
         # insert selection code
+
+    def readButton(self):
+        difficulty = difficultySelect()
+        widget.addWidget(difficulty)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def statsButton(self):
+        statistics = userStats()
+        widget.addWidget(statistics)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
 
 class adminHome(QDialog):
     def __init__(self):
         super(adminHome, self).__init__()
         loadUi("adminHome.ui", self)
         # insert selection code
+
+class difficultySelect(QDialog):
+    def __init__(self):
+        super(difficultySelect, self).__init__()
+        loadUi("difficultyselection.ui", self)
+
+class userStats(QDialog):
+    def __init__(self):
+        super(userStats, self).__init__()
+        loadUi("userStats.ui", self)
 
 # main
 app = QApplication(sys.argv)
