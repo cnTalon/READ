@@ -21,6 +21,8 @@ firebaseConfig = {
 
 firebase = pyrebase.initialize_app(firebaseConfig)
 auth = firebase.auth()
+diff = []
+username = []
 
 class WelcomeScreen(QDialog):
     def __init__(self):
@@ -67,10 +69,13 @@ class LoginScreen(QDialog):
             else:
                 try:
                     auth.sign_in_with_email_and_password(email, password)
-                    print("Login successful")
+                    print("successful")
                 except:
                     self.errorMsg.setVisible(True)
                     self.errorMsg.setText("Invalid username or password!")
+                home = homeScreen()
+                widget.addWidget(home)
+                widget.setCurrentIndex(widget.currentIndex() + 1)
 
 class CreateAccScreen(QDialog):
     def __init__(self):
@@ -79,6 +84,7 @@ class CreateAccScreen(QDialog):
         self.passwordField.setEchoMode(QtWidgets.QLineEdit.Password)
         self.confirmpasswordfield.setEchoMode(QtWidgets.QLineEdit.Password)
         self.signup.clicked.connect(self.createAcc)
+        self.backButton.clicked.connect(self.goBack)
 
     def createAcc(self):
         # extracts the text from the fields
@@ -104,6 +110,10 @@ class CreateAccScreen(QDialog):
             widget.addWidget(profile)
             widget.setCurrentIndex(widget.currentIndex() + 1)
 
+    def goBack(self):
+        self.close()
+        widget.setCurrentIndex(widget.currentIndex() - 1)
+
 class FillProfileScreen(QDialog):
     def __init__(self):
         super(FillProfileScreen, self).__init__()
@@ -116,6 +126,8 @@ class FillProfileScreen(QDialog):
         last = self.lastname.text()
         birth = self.birthday.text()
         job = self.occupation.currentText()
+
+        username.append(user)   # save username for later
 
         if job == "Teacher":
             verification = confirmID()
@@ -146,6 +158,7 @@ class homeScreen(QDialog):
         loadUi("home.ui", self)
         self.read.clicked.connect(self.readButton)
         self.stats.clicked.connect(self.statsButton)
+        self.profile.setText(username[0])
         # insert selection code
 
     def readButton(self):
@@ -169,11 +182,41 @@ class difficultySelect(QDialog):
     def __init__(self):
         super(difficultySelect, self).__init__()
         loadUi("difficultyselection.ui", self)
+        self.easy.clicked.connect(self.setEasy)
+        self.medium.clicked.connect(self.setMed)
+        self.hard.clicked.connect(self.setHard)
+        self.profile.setText(username[0])
+
+    def setEasy(self):
+        diff.append("Easy Stories")
+        stories = storyDisplay()
+        widget.addWidget(stories)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def setMed(self):
+        diff.append("Medium Stories")
+        stories = storyDisplay()
+        widget.addWidget(stories)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def setHard(self):
+        diff.append("Hard Stories")
+        stories = storyDisplay()
+        widget.addWidget(stories)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
 
 class userStats(QDialog):
     def __init__(self):
         super(userStats, self).__init__()
         loadUi("userStats.ui", self)
+        self.profile.setText(username[0])
+
+class storyDisplay(QDialog):
+    def __init__(self):
+        super(storyDisplay, self).__init__()
+        loadUi("storydisplay.ui", self)
+        self.difficulty.setText(diff[0])
+        self.profile.setText(username[0])
 
 # main
 app = QApplication(sys.argv)
