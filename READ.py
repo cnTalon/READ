@@ -8,6 +8,10 @@ import pyrebase
 
 # bg colour rgb(255, 183, 119)
 
+# todo list
+# find out how to link usernames via emails
+# how to do back button logic
+
 firebaseConfig = {
     'apiKey' : "AIzaSyCjtWMuOcd3_DlltUN9CQT8cOCCZoKFpKA",
     'authDomain' : "read-cd3f3.firebaseapp.com",
@@ -22,7 +26,7 @@ firebaseConfig = {
 firebase = pyrebase.initialize_app(firebaseConfig)
 auth = firebase.auth()
 diff = []
-username = []
+username = ["test"]
 
 class WelcomeScreen(QDialog):
     def __init__(self):
@@ -217,6 +221,27 @@ class storyDisplay(QDialog):
         loadUi("storydisplay.ui", self)
         self.difficulty.setText(diff[0])
         self.profile.setText(username[0])
+        self.story1.clicked.connect(self.storyOne)
+
+    def storyOne(self):
+        story = readStory()
+        widget.addWidget(story)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+class readStory(QDialog):
+    def __init__(self):
+        super(readStory, self).__init__()
+        loadUi("readStory.ui", self)
+        self.recordButton.clicked.connect(self.record)
+        self.profile.setText(username[0])
+        self.warn.setText("")
+
+    def record(self):
+        self.warn.setText("RECORDING...")
+        self.recordButton.clicked.connect(self.stopRecord)
+
+    def stopRecord(self):
+        self.warn.setText("STOPPED RECORDING")
 
 # main
 app = QApplication(sys.argv)
