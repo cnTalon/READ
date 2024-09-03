@@ -26,38 +26,6 @@
     <string notr="true">QWidget#bgwidget{
 background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379, y2:0.977, stop:0 rgb(255, 183, 119), stop:1 rgba(255, 255, 255, 255));}</string>
    </property>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>260</x>
-      <y>150</y>
-      <width>701</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 36pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
-    </property>
-    <property name="text">
-     <string>Select your reading difficulty level</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="profile">
-    <property name="geometry">
-     <rect>
-      <x>1010</x>
-      <y>20</y>
-      <width>171</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 18pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
-    </property>
-    <property name="text">
-     <string>Username Here</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="easy">
     <property name="geometry">
      <rect>
@@ -127,6 +95,50 @@ font: 14pt &quot;DengXian&quot;;</string>
     <property name="text">
      <string>Hard</string>
     </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>140</y>
+      <width>751</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QLabel" name="label">
+       <property name="styleSheet">
+        <string notr="true">font: 36pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
+       </property>
+       <property name="text">
+        <string>Select your reading difficulty level</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>940</x>
+      <y>10</y>
+      <width>241</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QLabel" name="profile">
+       <property name="styleSheet">
+        <string notr="true">font: 18pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
+       </property>
+       <property name="text">
+        <string>Username Here</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
  </widget>
