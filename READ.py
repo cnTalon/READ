@@ -1,4 +1,5 @@
 import sys
+from audio_recorder import AudioRecorder
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets
@@ -231,6 +232,8 @@ class storyDisplay(QDialog):
 class readStory(QDialog):
     def __init__(self):
         super(readStory, self).__init__()
+        self.recorder = AudioRecorder()
+        self.recorder.start()
         loadUi("readStory.ui", self)
         self.recordButton.clicked.connect(self.record)
         self.profile.setText(username[0])
@@ -238,10 +241,13 @@ class readStory(QDialog):
 
     def record(self):
         self.warn.setText("RECORDING...")
+        self.recorder.start_recording()
         self.recordButton.clicked.connect(self.stopRecord)
 
     def stopRecord(self):
+        self.recorder.stop_recording()
         self.warn.setText("STOPPED RECORDING")
+        self.recordButton.clicked.connect(self.record)
 
 # main
 app = QApplication(sys.argv)
