@@ -70,6 +70,8 @@ class LoginScreen(QDialog):
                     auth.sign_in_with_email_and_password(email, password)
                 except:
                     self.errorMsg.setText("Incorrect password!")
+                name = database.child("Admins").child(email.split("@")[0]).get().val()       # grab username from database
+                username.append(name['username'])                                            # store username for other windows
                 admin = adminHome()
                 widget.addWidget(admin)
                 widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -80,8 +82,8 @@ class LoginScreen(QDialog):
                 except:
                     self.errorMsg.setVisible(True)
                     self.errorMsg.setText("Invalid username or password!")
-                name = database.child("General Users").child(email.split("@")[0]).get().val()
-                username.append(name['username'])
+                name = database.child("General Users").child(email.split("@")[0]).get().val()       # grab username from database
+                username.append(name['username'])                                                   # store username for other windows
                 home = homeScreen()
                 widget.addWidget(home)
                 widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -139,20 +141,25 @@ class FillProfileScreen(QDialog):
         birth = self.birthday.text()
         job = self.occupation.currentText()
 
+        data = {
+                "username" : user,
+                "first name" : first,
+                "last name" : last,
+                "occupation" : job,
+                "DOB" : birth,
+            }
+
         if job == "Teacher":
+            database.child("Teachers").child(mail[0]).set(data)
             verification = confirmID()
             widget.addWidget(verification)
             widget.setCurrentIndex(widget.currentIndex() + 1)
         else:
-            data = {
-                        "username" : user,
-                        "first name" : first,
-                        "last name" : last,
-                        "occupation" : job,
-                        "DOB" : birth,
-                    }
             username.append(user)
-            database.child("General Users").child(mail[0]).set(data)      # sends the user inputted data to the database for later use
+            if job != "General User":
+                database.child("Admins").child(mail[0]).set(data)
+            else:
+                database.child("General Users").child(mail[0]).set(data)      # sends the user inputted data to the database for later use
             home = homeScreen()
             widget.addWidget(home)
             widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -168,7 +175,9 @@ class confirmID(QDialog):
         teacherID = self.teacherID.text()
 
         if teacherID == "T000":
-            print("real")
+            teacher = adminHome()
+            widget.addWidget(teacher)
+            widget.setCurrentIndex(widget.currentIndex() + 1)
         else:
             self.errorMsg.setText("Invalid TeacherID.")
 
@@ -197,7 +206,7 @@ class homeScreen(QDialog):
     def goBack(self):
         widget.removeWidget(self)
 
-
+# used for teachers and admins
 class adminHome(QDialog):
     def __init__(self):
         super(adminHome, self).__init__()

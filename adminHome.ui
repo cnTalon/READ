@@ -41,7 +41,7 @@ background-color: rgb(170, 255, 255);
 font: 14pt &quot;DengXian&quot;;</string>
     </property>
     <property name="text">
-     <string>Read Story</string>
+     <string>View Users</string>
     </property>
    </widget>
    <widget class="QLabel" name="errorMsg">
@@ -83,7 +83,7 @@ font: 14pt &quot;DengXian&quot;;</string>
      <rect>
       <x>300</x>
       <y>150</y>
-      <width>601</width>
+      <width>702</width>
       <height>80</height>
      </rect>
     </property>
