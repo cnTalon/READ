@@ -1,5 +1,6 @@
 import sys
 from audio_recorder import AudioRecorder
+from story import Story
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets
@@ -258,6 +259,8 @@ class storyDisplay(QDialog):
     def __init__(self):
         super(storyDisplay, self).__init__()
         loadUi("storydisplay.ui", self)
+        title = database.child("Story Bank").child("Lily and Needle").get().val()       # grab username from database
+        self.story1.setText(title['Title'])
         self.difficulty.setText(diff[0])
         self.profile.setText(username[0])
         self.story1.clicked.connect(self.storyOne)
@@ -278,6 +281,9 @@ class readStory(QDialog):
         self.recorder = AudioRecorder()
         self.recorder.start()
         loadUi("readStory.ui", self)
+        contents = database.child("Story Bank").child("Lily and Needle").get().val()['Contents']       # grab story contents from database
+        self.story = Story(contents)
+        lines = self.story.split_into_sentences()           # stores stories line by line
         self.recordButton.clicked.connect(self.record)
         self.backButton.clicked.connect(self.goBack)
         self.profile.setText(username[0])
