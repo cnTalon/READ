@@ -10,13 +10,12 @@ import pyrebase
 # bg colour rgb(255, 183, 119)
 
 # todo list
-# find out how to link usernames via emails
-# how to do back button logic
 
 firebaseConfig = {
     'apiKey' : "AIzaSyCjtWMuOcd3_DlltUN9CQT8cOCCZoKFpKA",
     'authDomain' : "read-cd3f3.firebaseapp.com",
     'projectId' : "read-cd3f3",
+    'databaseURL' : "https://read-cd3f3-default-rtdb.europe-west1.firebasedatabase.app/",
     'storageBucket' : "read-cd3f3.appspot.com",
     'messagingSenderId' : "537453362920",
     'appId' : "1:537453362920:web:d83cc5701179f21ba7135d",
@@ -25,6 +24,7 @@ firebaseConfig = {
 }
 
 firebase = pyrebase.initialize_app(firebaseConfig)
+database = firebase.database()
 auth = firebase.auth()
 diff = []
 username = ["test"]
@@ -52,7 +52,7 @@ class LoginScreen(QDialog):
         loadUi("login.ui",self)
         self.passwordField.setEchoMode(QtWidgets.QLineEdit.Password)
         self.login.clicked.connect(self.loginfunction)
-        
+        self.backButton.clicked.connect(self.goBack)
 
     def loginfunction(self):
         email = self.emailField.text()
@@ -78,9 +78,13 @@ class LoginScreen(QDialog):
                 except:
                     self.errorMsg.setVisible(True)
                     self.errorMsg.setText("Invalid username or password!")
+                database.reference("/General Users/" + email + "/")
                 home = homeScreen()
                 widget.addWidget(home)
                 widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def goBack(self):
+        widget.removeWidget(self)
 
 class CreateAccScreen(QDialog):
     def __init__(self):
@@ -116,8 +120,7 @@ class CreateAccScreen(QDialog):
             widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def goBack(self):
-        self.close()
-        widget.setCurrentIndex(widget.currentIndex() - 1)
+        widget.removeWidget(self)
 
 class FillProfileScreen(QDialog):
     def __init__(self):
@@ -132,13 +135,19 @@ class FillProfileScreen(QDialog):
         birth = self.birthday.text()
         job = self.occupation.currentText()
 
-        username.append(user)   # save username for later
-
         if job == "Teacher":
             verification = confirmID()
             widget.addWidget(verification)
             widget.setCurrentIndex(widget.currentIndex() + 1)
         else:
+            data = {
+                        "username" : user,
+                        "first name" : first,
+                        "last name" : last,
+                        "occupation" : job,
+                        "DOB" : birth,
+                    }
+            database.child("General Users").child(first).set(data)      # sends the user inputted data to the database for later use
             home = homeScreen()
             widget.addWidget(home)
             widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -148,6 +157,7 @@ class confirmID(QDialog):
         super(confirmID, self).__init__()
         loadUi("teacher.ui", self)
         self.signup.clicked.connect(self.confirm)
+        self.backButton.clicked.connect(self.goBack)
 
     def confirm(self):
         teacherID = self.teacherID.text()
@@ -156,6 +166,9 @@ class confirmID(QDialog):
             print("real")
         else:
             self.errorMsg.setText("Invalid TeacherID.")
+
+    def goBack(self):
+        widget.removeWidget(self)
 
 class homeScreen(QDialog):
     def __init__(self):
@@ -176,6 +189,9 @@ class homeScreen(QDialog):
         widget.addWidget(statistics)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
+    def goBack(self):
+        widget.removeWidget(self)
+
 
 class adminHome(QDialog):
     def __init__(self):
@@ -191,6 +207,7 @@ class difficultySelect(QDialog):
         self.medium.clicked.connect(self.setMed)
         self.hard.clicked.connect(self.setHard)
         self.profile.setText(username[0])
+        self.backButton.clicked.connect(self.goBack)
 
     def setEasy(self):
         diff.append("Easy Stories")
@@ -210,11 +227,18 @@ class difficultySelect(QDialog):
         widget.addWidget(stories)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
+    def goBack(self):
+        widget.removeWidget(self)
+
 class userStats(QDialog):
     def __init__(self):
         super(userStats, self).__init__()
         loadUi("userStats.ui", self)
         self.profile.setText(username[0])
+        self.backButton.clicked.connect(self.goBack)
+
+    def goBack(self):
+        widget.removeWidget(self)
 
 class storyDisplay(QDialog):
     def __init__(self):
@@ -223,11 +247,16 @@ class storyDisplay(QDialog):
         self.difficulty.setText(diff[0])
         self.profile.setText(username[0])
         self.story1.clicked.connect(self.storyOne)
+        self.backButton.clicked.connect(self.goBack)
 
     def storyOne(self):
         story = readStory()
         widget.addWidget(story)
         widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def goBack(self):
+        diff.clear()
+        widget.removeWidget(self)
 
 class readStory(QDialog):
     def __init__(self):
@@ -236,6 +265,7 @@ class readStory(QDialog):
         self.recorder.start()
         loadUi("readStory.ui", self)
         self.recordButton.clicked.connect(self.record)
+        self.backButton.clicked.connect(self.goBack)
         self.profile.setText(username[0])
         self.warn.setText("")
 
@@ -248,6 +278,9 @@ class readStory(QDialog):
         self.recorder.stop_recording()
         self.warn.setText("STOPPED RECORDING")
         self.recordButton.clicked.connect(self.record)
+
+    def goBack(self):
+        widget.removeWidget(self)
 
 # main
 app = QApplication(sys.argv)

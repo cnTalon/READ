@@ -163,8 +163,8 @@ font: 10pt &quot;DengXian&quot;; color: rgb(255, 0, 0)</string>
      <rect>
       <x>380</x>
       <y>70</y>
-      <width>441</width>
-      <height>61</height>
+      <width>544</width>
+      <height>65</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -187,7 +187,7 @@ font: 36pt &quot;DengXian&quot;; color:rgb(0,0,0)</string>
       <x>430</x>
       <y>200</y>
       <width>160</width>
-      <height>21</height>
+      <height>23</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -218,7 +218,7 @@ font: 36pt &quot;DengXian&quot;; color:rgb(0,0,0)</string>
       <x>430</x>
       <y>290</y>
       <width>160</width>
-      <height>21</height>
+      <height>23</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -249,7 +249,7 @@ font: 36pt &quot;DengXian&quot;; color:rgb(0,0,0)</string>
       <x>430</x>
       <y>380</y>
       <width>160</width>
-      <height>21</height>
+      <height>23</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -271,7 +271,7 @@ font: 36pt &quot;DengXian&quot;; color:rgb(0,0,0)</string>
       <x>430</x>
       <y>470</y>
       <width>160</width>
-      <height>21</height>
+      <height>23</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -286,6 +286,22 @@ font: 36pt &quot;DengXian&quot;; color:rgb(0,0,0)</string>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="backButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Back</string>
+    </property>
    </widget>
   </widget>
  </widget>

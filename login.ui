@@ -113,7 +113,7 @@ font: 14pt &quot;DengXian&quot;;</string>
      <rect>
       <x>440</x>
       <y>200</y>
-      <width>341</width>
+      <width>409</width>
       <height>41</height>
      </rect>
     </property>
@@ -136,7 +136,7 @@ font: 14pt &quot;DengXian&quot;;</string>
       <x>440</x>
       <y>260</y>
       <width>160</width>
-      <height>21</height>
+      <height>23</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -158,7 +158,7 @@ font: 14pt &quot;DengXian&quot;;</string>
       <x>440</x>
       <y>360</y>
       <width>160</width>
-      <height>21</height>
+      <height>23</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -173,6 +173,22 @@ font: 14pt &quot;DengXian&quot;;</string>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="backButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Back</string>
+    </property>
    </widget>
   </widget>
  </widget>

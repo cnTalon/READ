@@ -101,7 +101,7 @@ font: 14pt &quot;DengXian&quot;;</string>
      <rect>
       <x>310</x>
       <y>150</y>
-      <width>541</width>
+      <width>643</width>
       <height>80</height>
      </rect>
     </property>
@@ -139,6 +139,22 @@ font: 14pt &quot;DengXian&quot;;</string>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="backButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Back</string>
+    </property>
    </widget>
   </widget>
  </widget>

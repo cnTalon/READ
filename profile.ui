@@ -157,7 +157,7 @@ font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
       <x>80</x>
       <y>50</y>
       <width>611</width>
-      <height>61</height>
+      <height>65</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -292,6 +292,22 @@ font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="backButton_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Back</string>
+    </property>
    </widget>
   </widget>
  </widget>
