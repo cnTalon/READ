@@ -5,7 +5,7 @@ import threading
 class AudioRecorder(threading.Thread):
 	def __init__(self):
 		super().__init__()
-		self._filename = "recording.wav"
+		self._filename = "sentence.wav"
 		self._channels = 1
 		self._rate = 16000
 		self._frames_per_buffer = 1024
