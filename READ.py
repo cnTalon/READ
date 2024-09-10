@@ -6,6 +6,7 @@ from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QDialog, QApplication, QWidget
 from PyQt5.QtGui import QPixmap
 import pyrebase
+from collections import OrderedDict
 
 # bg colour rgb(255, 183, 119)
 
@@ -27,7 +28,8 @@ firebase = pyrebase.initialize_app(firebaseConfig)
 database = firebase.database()
 auth = firebase.auth()
 diff = []
-username = ["test"]
+mail = []
+username = []
 
 class WelcomeScreen(QDialog):
     def __init__(self):
@@ -78,7 +80,8 @@ class LoginScreen(QDialog):
                 except:
                     self.errorMsg.setVisible(True)
                     self.errorMsg.setText("Invalid username or password!")
-                database.reference("/General Users/" + email + "/")
+                name = database.child("General Users").child(email.split("@")[0]).get().val()
+                username.append(name['username'])
                 home = homeScreen()
                 widget.addWidget(home)
                 widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -115,6 +118,7 @@ class CreateAccScreen(QDialog):
                     self.errorMsg.setText("Minimum 6 character password!")
                 else:
                     self.errorMsg.setText("Invalid username!")
+            mail.append(email.split("@")[0])
             profile = FillProfileScreen()
             widget.addWidget(profile)
             widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -147,7 +151,8 @@ class FillProfileScreen(QDialog):
                         "occupation" : job,
                         "DOB" : birth,
                     }
-            database.child("General Users").child(first).set(data)      # sends the user inputted data to the database for later use
+            username.append(user)
+            database.child("General Users").child(mail[0]).set(data)      # sends the user inputted data to the database for later use
             home = homeScreen()
             widget.addWidget(home)
             widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -281,6 +286,16 @@ class readStory(QDialog):
 
     def goBack(self):
         widget.removeWidget(self)
+
+class lineFeedback(QDialog):
+    def __init__(self):
+        super(lineFeedback, self).__init__()
+        loadUi("lineFeedback.ui", self)
+        #if no error go to next line else try again
+        self.next.clicked.connect(self.retry)
+
+    def retry(self):
+        pass
 
 # main
 app = QApplication(sys.argv)
