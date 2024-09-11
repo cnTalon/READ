@@ -31,6 +31,7 @@ auth = firebase.auth()
 diff = []
 mail = []
 username = []
+title = []
 
 class WelcomeScreen(QDialog):
     def __init__(self):
@@ -259,14 +260,19 @@ class storyDisplay(QDialog):
     def __init__(self):
         super(storyDisplay, self).__init__()
         loadUi("storydisplay.ui", self)
-        title = database.child("Story Bank").child("Lily and Needle").get().val()       # grab username from database
-        self.story1.setText(title['Title'])
+        self.stories = database.child("Story Bank").get().val()                               # grab username from database
+        if self.stories:                                                                      # get all the story titles from db
+            titles = list(self.stories.keys())
+        for title in titles:                                                                  # add every story to list on display
+            self.list.addItem(title)
         self.difficulty.setText(diff[0])
         self.profile.setText(username[0])
-        self.story1.clicked.connect(self.storyOne)
+        self.list.itemClicked.connect(self.storyOne)
         self.backButton.clicked.connect(self.goBack)
 
-    def storyOne(self):
+    def storyOne(self, item):
+        storyTitle = item.text()                                                              # store the title for later use
+        title.append(storyTitle)
         story = readStory()
         widget.addWidget(story)
         widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -281,9 +287,10 @@ class readStory(QDialog):
         self.recorder = AudioRecorder()
         self.recorder.start()
         loadUi("readStory.ui", self)
-        contents = database.child("Story Bank").child("Lily and Needle").get().val()['Contents']       # grab story contents from database
+        contents = database.child("Story Bank").child(title[0]).get().val()['Contents']       # grab story contents from database
         self.story = Story(contents)
-        lines = self.story.split_into_sentences()           # stores stories line by line
+        lines = self.story.split_into_sentences()                                             # stores stories line by line
+        self.storyText.setWordWrap(True)                                                      # make sure text shows up (wrap text)
         self.storyText.setText(lines[0])
         self.recordButton.clicked.connect(self.record)
         self.backButton.clicked.connect(self.goBack)
@@ -301,6 +308,7 @@ class readStory(QDialog):
         self.recordButton.clicked.connect(self.record)
 
     def goBack(self):
+        title.clear()
         widget.removeWidget(self)
 
 class lineFeedback(QDialog):

@@ -89,84 +89,15 @@ background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379,
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>130</x>
-      <y>210</y>
+      <x>140</x>
+      <y>220</y>
       <width>951</width>
       <height>511</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QPushButton" name="read_4">
-       <property name="styleSheet">
-        <string notr="true">border-radius:20px;
-
-font: 36pt &quot;DengXian&quot;;</string>
-       </property>
-       <property name="text">
-        <string>Story 1</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QPushButton" name="story1">
-       <property name="styleSheet">
-        <string notr="true">border-radius:20px;
-
-font: 36pt &quot;DengXian&quot;;</string>
-       </property>
-       <property name="text">
-        <string>Story 1</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QPushButton" name="read_3">
-       <property name="styleSheet">
-        <string notr="true">border-radius:20px;
-
-font: 36pt &quot;DengXian&quot;;</string>
-       </property>
-       <property name="text">
-        <string>Story 1</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QPushButton" name="read_5">
-       <property name="styleSheet">
-        <string notr="true">border-radius:20px;
-
-font: 36pt &quot;DengXian&quot;;</string>
-       </property>
-       <property name="text">
-        <string>Story 1</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QPushButton" name="read_6">
-       <property name="styleSheet">
-        <string notr="true">border-radius:20px;
-
-font: 36pt &quot;DengXian&quot;;</string>
-       </property>
-       <property name="text">
-        <string>Story 1</string>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QPushButton" name="read_7">
-       <property name="styleSheet">
-        <string notr="true">border-radius:20px;
-
-font: 36pt &quot;DengXian&quot;;</string>
-       </property>
-       <property name="text">
-        <string>Story 1</string>
-       </property>
-      </widget>
+     <item row="0" column="0">
+      <widget class="QListWidget" name="list"/>
      </item>
     </layout>
    </widget>
