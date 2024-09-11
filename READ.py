@@ -36,6 +36,9 @@ username = []
 title = []
 
 class WelcomeScreen(QDialog):
+    # user can either log in
+    # or
+    # create account
     def __init__(self):
         super(WelcomeScreen, self).__init__()
         loadUi("welcomescreen.ui",self)
@@ -53,6 +56,9 @@ class WelcomeScreen(QDialog):
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
 class LoginScreen(QDialog):
+    # user can either input details to login
+    # or
+    # go back
     def __init__(self):
         super(LoginScreen, self).__init__()
         loadUi("login.ui",self)
@@ -96,6 +102,10 @@ class LoginScreen(QDialog):
         widget.removeWidget(self)
 
 class CreateAccScreen(QDialog):
+    # user can either input details (username, new password, password again to confirm its correct) to create account
+    # or
+    # go back
+
     def __init__(self):
         super(CreateAccScreen, self).__init__()
         loadUi("signup.ui",self)
@@ -130,6 +140,7 @@ class CreateAccScreen(QDialog):
             widget.setCurrentIndex(widget.currentIndex() + 1)
 
 class FillProfileScreen(QDialog):
+    # add details to profile (username, first name, last name, date of birth, user type)
     def __init__(self):
         super(FillProfileScreen, self).__init__()
         loadUi("profile.ui",self)
@@ -172,6 +183,7 @@ class FillProfileScreen(QDialog):
                 widget.setCurrentIndex(widget.currentIndex() + 1)
 
 class confirmID(QDialog):
+    # TODO add description
     def __init__(self):
         super(confirmID, self).__init__()
         loadUi("teacher.ui", self)
@@ -192,6 +204,7 @@ class confirmID(QDialog):
         widget.removeWidget(self)
 
 class homeScreen(QDialog):
+    # TODO add description
     def __init__(self):
         super(homeScreen, self).__init__()
         loadUi("home.ui", self)
@@ -215,12 +228,14 @@ class homeScreen(QDialog):
 
 # used for teachers and admins
 class adminHome(QDialog):
+    # TODO add description
     def __init__(self):
         super(adminHome, self).__init__()
         loadUi("adminHome.ui", self)
         # insert selection code
 
 class difficultySelect(QDialog):
+    # TODO add description
     def __init__(self):
         super(difficultySelect, self).__init__()
         loadUi("difficultyselection.ui", self)
@@ -252,6 +267,7 @@ class difficultySelect(QDialog):
         widget.removeWidget(self)
 
 class userStats(QDialog):
+    # TODO add description
     def __init__(self):
         super(userStats, self).__init__()
         loadUi("userStats.ui", self)
@@ -262,6 +278,7 @@ class userStats(QDialog):
         widget.removeWidget(self)
 
 class storyDisplay(QDialog):
+    # TODO add description
     def __init__(self):
         super(storyDisplay, self).__init__()
         loadUi("storydisplay.ui", self)
@@ -287,6 +304,7 @@ class storyDisplay(QDialog):
         widget.removeWidget(self)
 
 class readStory(QDialog):
+    # TODO add description
     def __init__(self):
         super(readStory, self).__init__()
         self.recorder = AudioRecorder()
@@ -317,6 +335,7 @@ class readStory(QDialog):
         widget.removeWidget(self)
 
 class lineFeedback(QDialog):
+    # TODO add description
     def __init__(self):
         super(lineFeedback, self).__init__()
         loadUi("lineFeedback.ui", self)
@@ -327,14 +346,15 @@ class lineFeedback(QDialog):
         pass
 
 # main
-app = QApplication(sys.argv)
-welcome = WelcomeScreen()
-widget = QtWidgets.QStackedWidget()
-widget.addWidget(welcome)
-widget.setFixedHeight(800)
-widget.setFixedWidth(1200)
-widget.show()
-try:
-    sys.exit(app.exec_())
-except:
-    print("Exiting")
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    welcome = WelcomeScreen()
+    widget = QtWidgets.QStackedWidget()
+    widget.addWidget(welcome)
+    widget.setFixedHeight(800)
+    widget.setFixedWidth(1200)
+    widget.show()
+    try:
+        sys.exit(app.exec_())
+    except:
+        print("Exiting")
