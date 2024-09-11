@@ -12,6 +12,7 @@ from collections import OrderedDict
 # bg colour rgb(255, 183, 119)
 
 # todo list
+# fix admin
 
 firebaseConfig = {
     'apiKey' : "AIzaSyCjtWMuOcd3_DlltUN9CQT8cOCCZoKFpKA",
@@ -30,6 +31,7 @@ database = firebase.database()
 auth = firebase.auth()
 diff = []
 mail = []
+emailAddy = []
 username = []
 title = []
 
@@ -67,7 +69,8 @@ class LoginScreen(QDialog):
             self.errorMsg.setText("Please input all fields.")
 
         else:
-            if email == "admin@mail.com":
+            check = database.child("Admins").child(email.split("@")[0]).get().val()
+            if check:
                 try:
                     auth.sign_in_with_email_and_password(email, password)
                 except:
@@ -80,7 +83,6 @@ class LoginScreen(QDialog):
             else:
                 try:
                     auth.sign_in_with_email_and_password(email, password)
-                    print("successful")
                 except:
                     self.errorMsg.setVisible(True)
                     self.errorMsg.setText("Invalid username or password!")
@@ -100,7 +102,6 @@ class CreateAccScreen(QDialog):
         self.passwordField.setEchoMode(QtWidgets.QLineEdit.Password)
         self.confirmpasswordfield.setEchoMode(QtWidgets.QLineEdit.Password)
         self.signup.clicked.connect(self.createAcc)
-        self.backButton.clicked.connect(self.goBack)
 
     def createAcc(self):
         # extracts the text from the fields
@@ -123,12 +124,10 @@ class CreateAccScreen(QDialog):
                 else:
                     self.errorMsg.setText("Invalid username!")
             mail.append(email.split("@")[0])
+            emailAddy.append(email)
             profile = FillProfileScreen()
             widget.addWidget(profile)
             widget.setCurrentIndex(widget.currentIndex() + 1)
-
-    def goBack(self):
-        widget.removeWidget(self)
 
 class FillProfileScreen(QDialog):
     def __init__(self):
@@ -149,6 +148,7 @@ class FillProfileScreen(QDialog):
                 "last name" : last,
                 "occupation" : job,
                 "DOB" : birth,
+                "email" : emailAddy[0],
             }
 
         if job == "Teacher":
@@ -160,11 +160,16 @@ class FillProfileScreen(QDialog):
             username.append(user)
             if job != "General User":
                 database.child("Admins").child(mail[0]).set(data)
+                emailAddy.clear()
+                adHome = adminHome()
+                widget.addWidget(adHome)
+                widget.setCurrentIndex(widget.currentIndex() + 1)
             else:
                 database.child("General Users").child(mail[0]).set(data)      # sends the user inputted data to the database for later use
-            home = homeScreen()
-            widget.addWidget(home)
-            widget.setCurrentIndex(widget.currentIndex() + 1)
+                emailAddy.clear()
+                home = homeScreen()
+                widget.addWidget(home)
+                widget.setCurrentIndex(widget.currentIndex() + 1)
 
 class confirmID(QDialog):
     def __init__(self):
