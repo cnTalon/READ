@@ -284,6 +284,7 @@ class readStory(QDialog):
         contents = database.child("Story Bank").child("Lily and Needle").get().val()['Contents']       # grab story contents from database
         self.story = Story(contents)
         lines = self.story.split_into_sentences()           # stores stories line by line
+        self.storyText.setText(lines[0])
         self.recordButton.clicked.connect(self.record)
         self.backButton.clicked.connect(self.goBack)
         self.profile.setText(username[0])
