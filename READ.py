@@ -331,6 +331,7 @@ class readStory(QDialog):
         self.recordButton.clicked.connect(self.record)
 
     def goBack(self):
+        self.recorder.finish_recording()
         title.clear()
         widget.removeWidget(self)
 
