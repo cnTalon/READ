@@ -8,6 +8,8 @@ from PyQt5.QtWidgets import QDialog, QApplication, QWidget
 from PyQt5.QtGui import QPixmap
 import pyrebase
 from collections import OrderedDict
+from wav2vec import wav2vec
+from IPAmatching import IPAmatching
 
 # bg colour rgb(255, 183, 119)
 
@@ -313,6 +315,12 @@ class readStory(QDialog):
         contents = database.child("Story Bank").child(title[0]).get().val()['Contents']       # grab story contents from database
         self.story = Story(contents)
         lines = self.story.split_into_sentences()                                             # stores stories line by line
+        self.sentence_iter =  iter(lines)
+        self.total_incorrect_words,self.total_words = 0,0
+        
+        # initialise wav2vec model
+        self.model = wav2vec()
+        
         self.storyText.setWordWrap(True)                                                      # make sure text shows up (wrap text)
         self.storyText.setText(lines[0])
         self.recordButton.clicked.connect(self.record)
@@ -326,9 +334,31 @@ class readStory(QDialog):
         self.recordButton.clicked.connect(self.stopRecord)
 
     def stopRecord(self):
+        self.recordButton.clicked.disconnect() # stop button from doing anything while processing
         self.recorder.stop_recording()
         self.warn.setText("STOPPED RECORDING")
+        
+        sentence = next(self.sentence_iter) # fetch next sentence
+        
+        # analysis
+        self.model.load_audio(self.recorder.getFilename())
+        self.model.get_values()
+        ipa_input = self.model.IPA_transcription
+        eng_input = self.model.word_transcription
+        ipa_expected = IPAmatching.IPA_correction(IPAmatching.ipa_transcription(sentence))
+        match_list = IPAmatching.pronunciation_matching(eng_input[0],ipa_input[0],ipa_expected.split(),sentence)
+        incorrect_words = []
+        for word in match_list:
+            if word[1] == 0 and word[2] == 0:
+                incorrect_words.append(word[0])
+        self.total_words += len(match_list)
+        self.total_incorrect_words += len(incorrect_words)
+        
+        # TODO if incorrect_words not empty, have user pronounce each word again
+        
         self.recordButton.clicked.connect(self.record)
+        
+        # TODO if last sentence, calc statistics and go to story feedback
 
     def goBack(self):
         self.recorder.finish_recording()

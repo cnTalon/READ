@@ -2,11 +2,13 @@ from IPAmatching import IPAmatching
 from wav2vec import wav2vec
 from story import Story
 
+# initialise
 model = wav2vec()
 sentence = Story("""Once upon a time, there was a little boy named Timmy. Timmy loved to play in the mud. He would jump up and down and make big splashes. One day, Timmy found something unknown in the mud. It was a shiny rock! Timmy was so happy and showed it to his mom. She said it was beautiful and they decided to keep it. From that day on, Timmy would always remember the fun he had playing in the mud and finding the unknown treasure.""").split_into_sentences()[0]
 accuracy = 1.0
 
-model.load_audio("sentence.wav")
+# recorded
+model.load_audio("sentence.wav") 
 model.get_values()
 input_ipa = model.IPA_transcription
 input_eng = model.word_transcription
