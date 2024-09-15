@@ -72,11 +72,14 @@ if __name__ == "__main__":
 	recorder = AudioRecorder()									# step 1 : make new object
 	recorder.start()														# step 2 : start thread
 	recorder.start_recording()									# step 3 : start the recording i.e. via pressing a button on screen
-	import time
-	for _ in range(2):
-		time.sleep(1)
-		print((_+1).__str__() + " seconds")				# step 4 : user reads
+	print("recording")
+	try:
+		while True:
+			pass
+	except KeyboardInterrupt:
+		pass
 	recorder.stop_recording()										# step 5 : stop the recording i.e. via pressing a buttton on screen
+	print("stopped")
 	recorder.finish_recording()									# step 6 : repeat steps 3 and 4 until end of story, finally finish recording to end thread's lifecycle
 	print("done")
 	recorder.join()
