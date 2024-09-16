@@ -14,8 +14,11 @@ from IPAmatching import IPAmatching
 # bg colour rgb(255, 183, 119)
 
 # todo list
+# fix adminHome
 # fix admin
+# add a db entry to save stats for user
 
+# link this project to the database for authentication and database
 firebaseConfig = {
     'apiKey' : "AIzaSyCjtWMuOcd3_DlltUN9CQT8cOCCZoKFpKA",
     'authDomain' : "read-cd3f3.firebaseapp.com",
@@ -28,14 +31,14 @@ firebaseConfig = {
     'databaseURL' : "https://read-cd3f3-default-rtdb.europe-west1.firebasedatabase.app/",
 }
 
-firebase = pyrebase.initialize_app(firebaseConfig)
-database = firebase.database()
-auth = firebase.auth()
-diff = []
-mail = []
-emailAddy = []
-username = []
-title = []
+firebase = pyrebase.initialize_app(firebaseConfig)      # initialise
+database = firebase.database()                          # set up database
+auth = firebase.auth()                                  # setup user authentication
+diff = []                                               # difficulty level
+mail = []                                               # name of email
+emailAddy = []                                          # email address
+username = []                                           # user's name
+title = []                                              # story title
 
 class WelcomeScreen(QDialog):
     # user can either log in
@@ -77,7 +80,7 @@ class LoginScreen(QDialog):
             self.errorMsg.setText("Please input all fields.")
 
         else:
-            check = database.child("Admins").child(email.split("@")[0]).get().val()
+            check = database.child("Admins").child(email.split("@")[0]).get().val()          # looks through Admins category in db and finds the entry
             if check:
                 try:
                     auth.sign_in_with_email_and_password(email, password)
@@ -135,8 +138,8 @@ class CreateAccScreen(QDialog):
                     self.errorMsg.setText("Minimum 6 character password!")
                 else:
                     self.errorMsg.setText("Invalid username!")
-            mail.append(email.split("@")[0])
-            emailAddy.append(email)
+            mail.append(email.split("@")[0])                                # save pre @ symbol name for user entry in db
+            emailAddy.append(email)                                         # email address for later use (also for db storage)
             profile = FillProfileScreen()
             widget.addWidget(profile)
             widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -148,6 +151,7 @@ class FillProfileScreen(QDialog):
         loadUi("profile.ui",self)
         self.signup.clicked.connect(self.profileSetUp)
 
+    # takes user entries to save in db
     def profileSetUp(self):
         user = self.username.text()
         first = self.firstname.text()
@@ -172,7 +176,7 @@ class FillProfileScreen(QDialog):
         else:
             username.append(user)
             if job != "General User":
-                database.child("Admins").child(mail[0]).set(data)
+                database.child("Admins").child(mail[0]).set(data)             # sends user inputted data to db
                 emailAddy.clear()
                 adHome = adminHome()
                 widget.addWidget(adHome)
@@ -185,7 +189,7 @@ class FillProfileScreen(QDialog):
                 widget.setCurrentIndex(widget.currentIndex() + 1)
 
 class confirmID(QDialog):
-    # TODO add description
+    # checks if the teacher is real/in system
     def __init__(self):
         super(confirmID, self).__init__()
         loadUi("teacher.ui", self)
@@ -206,20 +210,21 @@ class confirmID(QDialog):
         widget.removeWidget(self)
 
 class homeScreen(QDialog):
-    # TODO add description
+    # shows the home screen of the application with options to read or view stats
     def __init__(self):
         super(homeScreen, self).__init__()
         loadUi("home.ui", self)
         self.read.clicked.connect(self.readButton)
         self.stats.clicked.connect(self.statsButton)
         self.profile.setText(username[0])
-        # insert selection code
 
+    # takes you to select a difficulty
     def readButton(self):
         difficulty = difficultySelect()
         widget.addWidget(difficulty)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
+    # takes you to view your statistics
     def statsButton(self):
         statistics = userStats()
         widget.addWidget(statistics)
@@ -230,14 +235,14 @@ class homeScreen(QDialog):
 
 # used for teachers and admins
 class adminHome(QDialog):
-    # TODO add description
+    # displays the home page but with admin view
     def __init__(self):
         super(adminHome, self).__init__()
         loadUi("adminHome.ui", self)
         # insert selection code
 
 class difficultySelect(QDialog):
-    # TODO add description
+    # display difficulty options
     def __init__(self):
         super(difficultySelect, self).__init__()
         loadUi("difficultyselection.ui", self)
@@ -246,7 +251,8 @@ class difficultySelect(QDialog):
         self.hard.clicked.connect(self.setHard)
         self.profile.setText(username[0])
         self.backButton.clicked.connect(self.goBack)
-
+    
+    # each difficulty saves the type and then goes to the story display for the stories
     def setEasy(self):
         diff.append("Easy Stories")
         stories = storyDisplay()
@@ -269,7 +275,7 @@ class difficultySelect(QDialog):
         widget.removeWidget(self)
 
 class userStats(QDialog):
-    # TODO add description
+    # displays the user overall statistics
     def __init__(self):
         super(userStats, self).__init__()
         loadUi("userStats.ui", self)
@@ -280,7 +286,7 @@ class userStats(QDialog):
         widget.removeWidget(self)
 
 class storyDisplay(QDialog):
-    # TODO add description
+    # displays the stories in the database in a list
     def __init__(self):
         super(storyDisplay, self).__init__()
         loadUi("storydisplay.ui", self)
@@ -306,7 +312,7 @@ class storyDisplay(QDialog):
         widget.removeWidget(self)
 
 class readStory(QDialog):
-    # TODO add description
+    # shows the story line by line and allows recording of the audio at button presses
     def __init__(self):
         super(readStory, self).__init__()
         self.recorder = AudioRecorder()
@@ -366,7 +372,7 @@ class readStory(QDialog):
         widget.removeWidget(self)
 
 class lineFeedback(QDialog):
-    # TODO add description
+    # gives feedback to user on the read lines
     def __init__(self):
         super(lineFeedback, self).__init__()
         loadUi("lineFeedback.ui", self)
@@ -379,8 +385,8 @@ class lineFeedback(QDialog):
 # main
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    welcome = WelcomeScreen()
-    widget = QtWidgets.QStackedWidget()
+    welcome = WelcomeScreen()               # start the program with the welcome screen
+    widget = QtWidgets.QStackedWidget()     # start a stack for the widgets
     widget.addWidget(welcome)
     widget.setFixedHeight(800)
     widget.setFixedWidth(1200)
