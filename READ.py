@@ -136,15 +136,15 @@ class CreateAccScreen(QDialog):
         elif password != confirmpassword:
             self.errorMsg.setText("Passwords do not match.")
         else:
-            checkGen = database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).get().val()       # grab username from database
-            checkAdmin = database.child("Admins").child(email.replace(".", "%20").replace("@", "%40")).get().val()            # grab username from database
-            if (checkGen and checkGen['email'] == email) or (checkAdmin and checkAdmin['email'] == email):
+            checkGen = database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).get().val()       
+            checkAdmin = database.child("Admins").child(email.replace(".", "%20").replace("@", "%40")).get().val()            
+            if (checkGen and checkGen['email'] == email) or (checkAdmin and checkAdmin['email'] == email):              # check if emails are in database, if they are do they match the one being used
                 self.errorMsg.setText("Email already in use!")
             else:
                 try:
                     auth.create_user_with_email_and_password(email, password)
-                    mail.append(email.replace(".", "%20").replace("@", "%40"))                                # save pre @ symbol name for user entry in db
-                    emailAddy.append(email)                                         # email address for later use (also for db storage)
+                    mail.append(email.replace(".", "%20").replace("@", "%40"))                                          # save name for user entry in db
+                    emailAddy.append(email)                                                                             # email address for later use (also for db storage)
                     profile = FillProfileScreen()
                     widget.addWidget(profile)
                     widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -152,7 +152,7 @@ class CreateAccScreen(QDialog):
                     if len(password) < 6:
                         self.errorMsg.setText("Minimum 6 character password!")
                     else:
-                        self.errorMsg.setText("Invalid username!")
+                        self.errorMsg.setText("Email already in use!")
 
 class FillProfileScreen(QDialog):
     # add details to profile (username, first name, last name, date of birth, user type)
