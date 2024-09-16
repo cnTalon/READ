@@ -354,7 +354,7 @@ class readStory(QDialog):
         self.total_words += len(match_list)
         self.total_incorrect_words += len(incorrect_words)
         
-        # TODO if incorrect_words not empty, have user pronounce each word again
+        # TODO if incorrect_words not empty, have user pronounce each word again (for word in incorrect_words)
         
         self.recordButton.clicked.connect(self.record)
         
