@@ -26,24 +26,6 @@
     <string notr="true">QWidget#bgwidget{
 background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379, y2:0.977, stop:0 rgb(255, 183, 119), stop:1 rgba(255, 255, 255, 255));}</string>
    </property>
-   <widget class="QPushButton" name="read">
-    <property name="geometry">
-     <rect>
-      <x>190</x>
-      <y>280</y>
-      <width>271</width>
-      <height>241</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">border-radius:20px;
-background-color: rgb(170, 255, 255);
-font: 14pt &quot;DengXian&quot;;</string>
-    </property>
-    <property name="text">
-     <string>Read Story</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="errorMsg">
     <property name="geometry">
      <rect>
@@ -60,41 +42,23 @@ font: 14pt &quot;DengXian&quot;;</string>
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="stats">
-    <property name="geometry">
-     <rect>
-      <x>740</x>
-      <y>280</y>
-      <width>271</width>
-      <height>241</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">border-radius:20px;
-background-color: rgb(170, 255, 255);
-font: 14pt &quot;DengXian&quot;;</string>
-    </property>
-    <property name="text">
-     <string>View Statistics</string>
-    </property>
-   </widget>
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>140</y>
-      <width>821</width>
-      <height>80</height>
+      <x>210</x>
+      <y>190</y>
+      <width>751</width>
+      <height>321</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
-     <item alignment="Qt::AlignHCenter">
-      <widget class="QLabel" name="label">
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QLabel" name="stats">
        <property name="styleSheet">
         <string notr="true">font: 36pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
        </property>
        <property name="text">
-        <string>What would you like to do?</string>
+        <string>Statistics Here</string>
        </property>
       </widget>
      </item>
@@ -103,14 +67,14 @@ font: 14pt &quot;DengXian&quot;;</string>
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>980</x>
-      <y>20</y>
-      <width>200</width>
+      <x>940</x>
+      <y>10</y>
+      <width>241</width>
       <height>51</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
+     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
       <widget class="QLabel" name="profile">
        <property name="styleSheet">
         <string notr="true">font: 18pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
@@ -121,6 +85,35 @@ font: 14pt &quot;DengXian&quot;;</string>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="backButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Back</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="next">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>580</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Next</string>
+    </property>
    </widget>
   </widget>
  </widget>

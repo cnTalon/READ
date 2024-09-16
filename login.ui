@@ -111,14 +111,14 @@ font: 14pt &quot;DengXian&quot;;</string>
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>440</x>
+      <x>400</x>
       <y>200</y>
       <width>409</width>
       <height>41</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+     <item>
       <widget class="QLabel" name="label_2">
        <property name="styleSheet">
         <string notr="true">font: 18pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
@@ -146,7 +146,7 @@ font: 14pt &quot;DengXian&quot;;</string>
         <string notr="true">font: 75 12pt &quot;DengXian&quot;;</string>
        </property>
        <property name="text">
-        <string>Username</string>
+        <string>Email Address</string>
        </property>
       </widget>
      </item>

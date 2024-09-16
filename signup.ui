@@ -103,14 +103,14 @@ font: 10pt &quot;DengXian&quot;;</string>
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>530</x>
+      <x>510</x>
       <y>100</y>
-      <width>160</width>
+      <width>196</width>
       <height>80</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
-     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+     <item>
       <widget class="QLabel" name="label">
        <property name="styleSheet">
         <string notr="true">font: 36pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
@@ -125,14 +125,14 @@ font: 10pt &quot;DengXian&quot;;</string>
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>440</x>
+      <x>430</x>
       <y>200</y>
-      <width>341</width>
+      <width>366</width>
       <height>41</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+     <item>
       <widget class="QLabel" name="label_2">
        <property name="styleSheet">
         <string notr="true">font: 18pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
@@ -150,7 +150,7 @@ font: 10pt &quot;DengXian&quot;;</string>
       <x>440</x>
       <y>270</y>
       <width>160</width>
-      <height>21</height>
+      <height>23</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -169,7 +169,7 @@ font: 10pt &quot;DengXian&quot;;</string>
         <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
        </property>
        <property name="text">
-        <string>Username</string>
+        <string>Email Address</string>
        </property>
       </widget>
      </item>
@@ -181,7 +181,7 @@ font: 10pt &quot;DengXian&quot;;</string>
       <x>440</x>
       <y>370</y>
       <width>160</width>
-      <height>21</height>
+      <height>23</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -203,7 +203,7 @@ font: 10pt &quot;DengXian&quot;;</string>
       <x>440</x>
       <y>470</y>
       <width>160</width>
-      <height>21</height>
+      <height>23</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_5">

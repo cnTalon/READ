@@ -84,24 +84,30 @@ class LoginScreen(QDialog):
             if check:
                 try:
                     auth.sign_in_with_email_and_password(email, password)
-                except:
-                    self.errorMsg.setText("Incorrect password!")
-                name = database.child("Admins").child(email.split("@")[0]).get().val()       # grab username from database
-                username.append(name['username'])                                            # store username for other windows
-                admin = adminHome()
-                widget.addWidget(admin)
-                widget.setCurrentIndex(widget.currentIndex() + 1)
-            else:
-                try:
-                    auth.sign_in_with_email_and_password(email, password)
+                    name = database.child("Admins").child(email.split("@")[0]).get().val()       # grab username from database
+                    username.append(name['username'])                                            # store username for other windows
+                    admin = adminHome()
+                    widget.addWidget(admin)
+                    widget.setCurrentIndex(widget.currentIndex() + 1)
                 except:
                     self.errorMsg.setVisible(True)
-                    self.errorMsg.setText("Invalid username or password!")
+                    self.errorMsg.setText("Invalid password!")
+            else:
                 name = database.child("General Users").child(email.split("@")[0]).get().val()       # grab username from database
-                username.append(name['username'])                                                   # store username for other windows
-                home = homeScreen()
-                widget.addWidget(home)
-                widget.setCurrentIndex(widget.currentIndex() + 1)
+                if name:
+                    try:
+                        auth.sign_in_with_email_and_password(email, password)
+                        username.append(name['username'])                                                   # store username for other windows
+                        home = homeScreen()
+                        widget.addWidget(home)
+                        widget.setCurrentIndex(widget.currentIndex() + 1)
+                    except:
+                        self.errorMsg.setVisible(True)
+                        self.errorMsg.setText("Invalid password!")
+                else:
+                    self.errorMsg.setVisible(True)
+                    self.errorMsg.setText("Invalid username!")
+                
 
     def goBack(self):
         widget.removeWidget(self)
@@ -333,6 +339,8 @@ class readStory(QDialog):
         self.backButton.clicked.connect(self.goBack)
         self.profile.setText(username[0])
         self.warn.setText("")
+        self.instructions.setText("Please read the following line:")
+        self.skipButton.setVisible(False)
 
     def record(self):
         self.warn.setText("RECORDING...")
@@ -371,11 +379,11 @@ class readStory(QDialog):
         title.clear()
         widget.removeWidget(self)
 
-class lineFeedback(QDialog):
+class storyFeedback(QDialog):
     # gives feedback to user on the read lines
     def __init__(self):
-        super(lineFeedback, self).__init__()
-        loadUi("lineFeedback.ui", self)
+        super(storyFeedback, self).__init__()
+        loadUi("storyFeedback.ui", self)
         #if no error go to next line else try again
         self.next.clicked.connect(self.retry)
 
