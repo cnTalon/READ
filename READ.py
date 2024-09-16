@@ -314,32 +314,32 @@ class readStory(QDialog):
         loadUi("readStory.ui", self)
         contents = database.child("Story Bank").child(title[0]).get().val()['Contents']       # grab story contents from database
         self.story = Story(contents)
-        lines = self.story.split_into_sentences()                                             # stores stories line by line
-        self.sentence_iter =  iter(lines)
+        self.lines = self.story.split_into_sentences()                                             # stores stories line by line
+        self.incorrect_words = []
         self.total_incorrect_words,self.total_words = 0,0
         
         # initialise wav2vec model
         self.model = wav2vec()
         
         self.storyText.setWordWrap(True)                                                      # make sure text shows up (wrap text)
-        self.storyText.setText(lines[0])
+        self.storyText.setText(self.lines[0])
         self.recordButton.clicked.connect(self.record)
         self.backButton.clicked.connect(self.goBack)
         self.profile.setText(username[0])
         self.warn.setText("")
 
     def record(self):
+        self.recordButton.clicked.connect(self.stopRecord)
         self.warn.setText("RECORDING...")
         self.recorder.start_recording()
-        self.recordButton.clicked.connect(self.stopRecord)
 
     def stopRecord(self):
         self.recordButton.clicked.disconnect() # stop button from doing anything while processing
         self.recorder.stop_recording()
         self.warn.setText("STOPPED RECORDING")
         
-        sentence = next(self.sentence_iter) # fetch next sentence
-        
+        if not self.incorrect_words: sentence = self.lines.pop(0) # fetch next sentence if not going through incorrect words
+        else: sentence = self.incorrect_words.pop(0)
         # analysis
         self.model.load_audio(self.recorder.getFilename())
         self.model.get_values()
@@ -347,18 +347,31 @@ class readStory(QDialog):
         eng_input = self.model.word_transcription
         ipa_expected = IPAmatching.IPA_correction(IPAmatching.ipa_transcription(sentence))
         match_list = IPAmatching.pronunciation_matching(eng_input[0],ipa_input[0],ipa_expected.split(),sentence)
-        incorrect_words = []
-        for word in match_list:
-            if word[1] == 0 and word[2] == 0:
-                incorrect_words.append(word[0])
-        self.total_words += len(match_list)
-        self.total_incorrect_words += len(incorrect_words)
+        if not self.incorrect_words: # if sentence is from lines
+            for word in match_list:
+                if word[1] == 0 and word[2] == 0: # word was pronounced incorrectly
+                    self.incorrect_words.append(word[0])
+            self.total_words += len(match_list)
+            self.total_incorrect_words += len(self.incorrect_words)
+        elif match_list[0][1] == 0 and match_list[0][2] == 0: # if mispronounced word is mispronounced again
+            self.incorrect_words.insert(0,sentence) # put word back in
+            self.skipButton.show() # TODO add skipButton, hidden by default, pressed: must call self.incorrect_words.pop(0); if more incorrect words, show it, else show next sentence
+        else: # if mispronounced word was pronounced correctly
+            self.storyText.setText(self.incorrect_words[0]) # display next word
+        if True:
+            self.storyText.setText(self.lines[0])
+        if not self.lines:
+            # TODO calc statistics and go to story feedback
+        
         
         # TODO if incorrect_words not empty, have user pronounce each word again (for word in incorrect_words)
+        # if incorrect_words:
+        #     self.instructions.setText("Please read again:")
+        #     self.storyText.setText(incorrect_words.pop(0))
+        
         
         self.recordButton.clicked.connect(self.record)
         
-        # TODO if last sentence, calc statistics and go to story feedback
 
     def goBack(self):
         self.recorder.finish_recording()
