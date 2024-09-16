@@ -80,12 +80,11 @@ class LoginScreen(QDialog):
             self.errorMsg.setText("Please input all fields.")
 
         else:
-            check = database.child("Admins").child(email.split("@")[0]).get().val()          # looks through Admins category in db and finds the entry
+            check = database.child("Admins").child(email.replace(".", "%20").replace("@", "%40")).get().val()          # looks through Admins category in db and finds the entry
             if check:
                 try:
                     auth.sign_in_with_email_and_password(email, password)
-                    name = database.child("Admins").child(email.split("@")[0]).get().val()       # grab username from database
-                    username.append(name['username'])                                            # store username for other windows
+                    username.append(check['username'])                                            # store username for other windows
                     admin = adminHome()
                     widget.addWidget(admin)
                     widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -93,7 +92,7 @@ class LoginScreen(QDialog):
                     self.errorMsg.setVisible(True)
                     self.errorMsg.setText("Invalid password!")
             else:
-                name = database.child("General Users").child(email.split("@")[0]).get().val()       # grab username from database
+                name = database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).get().val()       # grab username from database
                 if name:
                     try:
                         auth.sign_in_with_email_and_password(email, password)
@@ -137,18 +136,23 @@ class CreateAccScreen(QDialog):
         elif password != confirmpassword:
             self.errorMsg.setText("Passwords do not match.")
         else:
-            try:
-                auth.create_user_with_email_and_password(email, password)
-            except:
-                if len(password) < 6:
-                    self.errorMsg.setText("Minimum 6 character password!")
-                else:
-                    self.errorMsg.setText("Invalid username!")
-            mail.append(email.split("@")[0])                                # save pre @ symbol name for user entry in db
-            emailAddy.append(email)                                         # email address for later use (also for db storage)
-            profile = FillProfileScreen()
-            widget.addWidget(profile)
-            widget.setCurrentIndex(widget.currentIndex() + 1)
+            checkGen = database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).get().val()       # grab username from database
+            checkAdmin = database.child("Admins").child(email.replace(".", "%20").replace("@", "%40")).get().val()            # grab username from database
+            if (checkGen and checkGen['email'] == email) or (checkAdmin and checkAdmin['email'] == email):
+                self.errorMsg.setText("Email already in use!")
+            else:
+                try:
+                    auth.create_user_with_email_and_password(email, password)
+                    mail.append(email.replace(".", "%20").replace("@", "%40"))                                # save pre @ symbol name for user entry in db
+                    emailAddy.append(email)                                         # email address for later use (also for db storage)
+                    profile = FillProfileScreen()
+                    widget.addWidget(profile)
+                    widget.setCurrentIndex(widget.currentIndex() + 1)
+                except:
+                    if len(password) < 6:
+                        self.errorMsg.setText("Minimum 6 character password!")
+                    else:
+                        self.errorMsg.setText("Invalid username!")
 
 class FillProfileScreen(QDialog):
     # add details to profile (username, first name, last name, date of birth, user type)
