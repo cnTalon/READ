@@ -375,9 +375,12 @@ class readStory(QDialog):
         #     self.instructions.setText("Please read again:")
         #     self.storyText.setText(incorrect_words.pop(0))
         
+        # TODO if user reads sentence and pronunciation correct
+        # TODO if user reads sentence and pronunciation is not correct
+        # TODO if user reads mispronounced word and pronunciation correct
+        # TODO if user reads mispronounced word and pronunciation incorrect
         
         self.recordButton.clicked.connect(self.record)
-        
 
     def goBack(self):
         self.recorder.finish_recording()
