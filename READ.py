@@ -402,7 +402,7 @@ class readStory(QDialog):
         #     self.storyText.setText(incorrect_words.pop(0))
         
         
-        self.recordButton.clicked.connect(self.record)
+            self.recordButton.clicked.connect(self.record)
         
 
     def goBack(self):
