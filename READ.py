@@ -227,6 +227,7 @@ class homeScreen(QDialog):
         self.read.clicked.connect(self.readButton)
         self.stats.clicked.connect(self.statsButton)
         self.profile.setText(username[0])
+        self.logOut.clicked.connect(self.logOutUser)
 
     # takes you to select a difficulty
     def readButton(self):
@@ -239,6 +240,19 @@ class homeScreen(QDialog):
         statistics = userStats()
         widget.addWidget(statistics)
         widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def logOutUser(self):
+        self.clearStack()
+        mail.clear()
+        emailAddy.clear()
+        username.clear()
+        welcome = WelcomeScreen()
+        widget.addWidget(welcome)
+        widget.setCurrentIndex(widget.indexOf(welcome))
+
+    def clearStack(self):
+        while widget.count() > 0:
+            widget.removeWidget(widget.widget(0))
 
     def goBack(self):
         widget.removeWidget(self)
