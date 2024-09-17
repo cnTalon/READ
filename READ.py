@@ -177,6 +177,8 @@ class FillProfileScreen(QDialog):
                 "occupation" : job,
                 "DOB" : birth,
                 "email" : emailAddy[0],
+                "accuracy" : 0,
+                "speed" : 0,
             }
 
         if job == "Teacher":
@@ -399,6 +401,9 @@ class readStory(QDialog):
                 self.accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
                 self.statistics_signal.emit([self.accuracy,self.speed]) # TODO@b1gRedDoor #3 : add speed statistic
                 # TODO@cnTalon #2 : pull old statistics and update statistics in user's row in database
+                # oldAccuracy = database.child("General User").child(email.replace(".", "%20")).get().val()['accuracy'] # gets old accuracy from db
+                # perform calculation
+                # database.child("General User").child(email.replace(".", "%20")).update({'accuracy' : accuracy})       # updating the database entry accuracy to the current accuracy
                 # TODO@b1gRedDoor #4 : calculate new values for statistics
                 # call finishStory method
         # endregion
