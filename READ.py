@@ -4,6 +4,7 @@ from story import Story
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QDialog, QApplication, QWidget
 from PyQt5.QtGui import QPixmap
 import pyrebase
@@ -336,6 +337,7 @@ class storyDisplay(QDialog):
         widget.removeWidget(self)
 
 class readStory(QDialog):
+    statistics_signal = pyqtSignal(list[float])
     # shows the story line by line and allows recording of the audio at button presses
     def __init__(self):
         super(readStory, self).__init__()
@@ -363,12 +365,14 @@ class readStory(QDialog):
     def record(self):
         self.recordButton.clicked.connect(self.stopRecord)
         self.warn.setText("RECORDING...")
+        self.warn.show()
         self.recorder.start_recording()
 
     def stopRecord(self):
         self.recordButton.clicked.disconnect() # stop button from doing anything while processing
         self.recorder.stop_recording()
-        self.warn.setText("STOPPED RECORDING")
+        self.warn.setText("PLEASE WAIT")
+        # TODO@b1gRedDoor #5 : give user feedback that it will take a while
         
         if not self.incorrect_words: # incorrect words is empty
             sentence = self.lines[0]
@@ -391,10 +395,12 @@ class readStory(QDialog):
             self.total_words += len(match_list)
             self.total_incorrect_words += len(self.incorrect_words)
             self.lines.pop(0)
-            if not self.incorrect_words and not self.lines:
+            if not self.incorrect_words and not self.lines: # if end of story
                 self.accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
-                # TODO@cnTalon #1 : go to story feedback and somehow pass statistics to the window so it can be displayed
-                # TODO@cnTalon #2 : update statistics in user's row in database
+                self.statistics_signal.emit([self.accuracy,self.speed]) # TODO@b1gRedDoor #3 : add speed statistic
+                # TODO@cnTalon #2 : pull old statistics and update statistics in user's row in database
+                # TODO@b1gRedDoor #4 : calculate new values for statistics
+                # call finishStory method
         # endregion
         # region read mispronounced word
         elif match_list[0][2] == 1 or match_list[0][1] == 1: # correct pronunciation
@@ -410,12 +416,17 @@ class readStory(QDialog):
             self.skipButton.show() # allow the user to skip
         # endregion
         
-        # TODO if user skips a word
         # TODO if story is finished
-        
+        self.warn.hide()
         self.recordButton.clicked.connect(self.record)
         
+    # TODO@b1gRedDoor : skipButton
+    # if more incorrect words, display next
+    # if more sentences, display next
+    # else call finishStory method
 
+    # TODO@cnTalon #1 : make method finishStory() that go to story feedback and somehow pass statistics to the window so it can be displayed
+    
     def goBack(self):
         self.recorder.finish_recording()
         title.clear()
