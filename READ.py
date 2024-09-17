@@ -370,41 +370,48 @@ class readStory(QDialog):
         self.recorder.stop_recording()
         self.warn.setText("STOPPED RECORDING")
         
-        if not self.incorrect_words: sentence = self.lines.pop(0) # fetch next sentence if not going through incorrect words
-        else: sentence = self.incorrect_words.pop(0)
-        # analysis
+        if not self.incorrect_words: # incorrect words is empty
+            sentence = self.lines[0]
+        else:
+            sentence = self.incorrect_words[0]
+        
+        # region analysis
         self.model.load_audio(self.recorder.getFilename())
         self.model.get_values()
         ipa_input = self.model.IPA_transcription
         eng_input = self.model.word_transcription
         ipa_expected = IPAmatching.IPA_correction(IPAmatching.ipa_transcription(sentence))
         match_list = IPAmatching.pronunciation_matching(eng_input[0],ipa_input[0],ipa_expected.split(),sentence)
-        if not self.incorrect_words: # if sentence is from lines
+        # endregion
+        # region read sentence
+        if not self.incorrect_words: # user reads sentence
             for word in match_list:
                 if word[1] == 0 and word[2] == 0: # word was pronounced incorrectly
                     self.incorrect_words.append(word[0])
             self.total_words += len(match_list)
             self.total_incorrect_words += len(self.incorrect_words)
-        elif match_list[0][1] == 0 and match_list[0][2] == 0: # if mispronounced word is mispronounced again
-            self.incorrect_words.insert(0,sentence) # put word back in
-            self.skipButton.show() # TODO add skipButton, hidden by default, pressed: must call self.incorrect_words.pop(0); if more incorrect words, show it, else show next sentence
-        else: # if mispronounced word was pronounced correctly
-            self.storyText.setText(self.incorrect_words[0]) # display next word
-        if True:
-            self.storyText.setText(self.lines[0])
-        if not self.lines:
-            # TODO calc statistics and go to story feedback
+            self.lines.pop(0)
+            if not self.incorrect_words and not self.lines:
+                self.accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
+                #TODO : go to story feedback and somehow pass statistics to the window so it can be displayed
+                #TODO : update statistics in user's row in database
+        # endregion
+        # region read mispronounced word
+        elif match_list[0][2] == 1 or match_list[0][1] == 1: # correct pronunciation
+            
+            self.incorrect_words.pop(0)
+            if self.incorrect_words: # more words to retry
+                self.storyText.setText(self.incorrect_words[0])
+            else:
+                self.skipButton.hide() # prevent the user from skipping after all incorrect words are finished
+                self.lines.pop(0)
+                self.storyText.setText(self.lines[0])
+        else: # mispronounced again
+            self.skipButton.show() # allow the user to skip
+        # endregion
         
-        
-        # TODO if incorrect_words not empty, have user pronounce each word again (for word in incorrect_words)
-        # if incorrect_words:
-        #     self.instructions.setText("Please read again:")
-        #     self.storyText.setText(incorrect_words.pop(0))
-        
-        # TODO if user reads sentence and pronunciation correct
-        # TODO if user reads sentence and pronunciation is not correct
-        # TODO if user reads mispronounced word and pronunciation correct
-        # TODO if user reads mispronounced word and pronunciation incorrect
+        # TODO if user skips a word
+        # TODO if story is finished
         
         self.recordButton.clicked.connect(self.record)
 
