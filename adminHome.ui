@@ -26,7 +26,7 @@
     <string notr="true">QWidget#bgwidget{
 background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379, y2:0.977, stop:0 rgb(255, 183, 119), stop:1 rgba(255, 255, 255, 255));}</string>
    </property>
-   <widget class="QPushButton" name="read">
+   <widget class="QPushButton" name="userMngmnt">
     <property name="geometry">
      <rect>
       <x>190</x>

@@ -40,6 +40,7 @@ mail = []                                               # name of email
 emailAddy = []                                          # email address
 username = []                                           # user's name
 title = []                                              # story title
+check = []
 
 class WelcomeScreen(QDialog):
     # user can either log in
@@ -160,6 +161,7 @@ class FillProfileScreen(QDialog):
     def __init__(self):
         super(FillProfileScreen, self).__init__()
         loadUi("profile.ui",self)
+        check = check[0]
         self.signup.clicked.connect(self.profileSetUp)
 
     # takes user entries to save in db
@@ -177,6 +179,8 @@ class FillProfileScreen(QDialog):
                 "occupation" : job,
                 "DOB" : birth,
                 "email" : emailAddy[0],
+                "accuracy" : 0,
+                "speed" : 0,
             }
 
         if job == "Teacher":
@@ -195,9 +199,13 @@ class FillProfileScreen(QDialog):
             else:
                 database.child("General Users").child(mail[0]).set(data)      # sends the user inputted data to the database for later use
                 emailAddy.clear()
-                home = homeScreen()
-                widget.addWidget(home)
-                widget.setCurrentIndex(widget.currentIndex() + 1)
+                if check is None:                                             # checks if user was added by admin or self
+                    home = homeScreen()
+                    widget.addWidget(home)
+                    widget.setCurrentIndex(widget.currentIndex() + 1)
+                else:
+                    check.clear()
+                    widget.removeWidget(self)                                 # once user is added by admin the page terminates and the admin is notified that the user was added successfully
 
 class confirmID(QDialog):
     # checks if the teacher is real/in system
@@ -264,7 +272,31 @@ class adminHome(QDialog):
     def __init__(self):
         super(adminHome, self).__init__()
         loadUi("adminHome.ui", self)
+        self.userMngmnt.clicked.connect(self.manageUsers)
         # insert selection code
+
+    def manageUsers(self):
+        self.userMngmnt.setText("Add User")
+        self.stats.setText("Remove User")
+        self.userMngmnt.clicked.connect(self.addUser)
+        self.userMngmnt.clicked.connect(self.removeUser)
+
+    def addUser(self):
+        check.append("1")                                           # lets program know admin is trying to add user
+        newProfile = FillProfileScreen()
+        widget.addWidget(newProfile)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def removeUser(self):
+        # show list of users
+        # prompt removal via text input
+        email = self.input.text()                                   # email input by admin
+        database.child("General Users").child(email).delete()       # search user in database and remove
+
+    def checkUserStats(self):
+        beep = boop
+
+        
 
 class difficultySelect(QDialog):
     # display difficulty options
@@ -400,6 +432,9 @@ class readStory(QDialog):
                 self.statistics_signal.emit([self.accuracy,self.speed]) # TODO@b1gRedDoor #3 : add speed statistic
                 # TODO@b1gRedDoor #6 finish the signals and slots
                 # TODO@cnTalon #2 : pull old statistics and update statistics in user's row in database
+                # oldAccuracy = database.child("General User").child(email.replace(".", "%20")).get().val()['accuracy'] # gets old accuracy from db
+                # perform calculation
+                # database.child("General User").child(email.replace(".", "%20")).update({'accuracy' : accuracy})       # updating the database entry accuracy to the current accuracy
                 # TODO@b1gRedDoor #4 : calculate new values for statistics
                 # call finishStory method
         # endregion
