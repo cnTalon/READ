@@ -393,8 +393,8 @@ class readStory(QDialog):
             self.lines.pop(0)
             if not self.incorrect_words and not self.lines:
                 self.accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
-                # TODO@cnTalon : go to story feedback and somehow pass statistics to the window so it can be displayed
-                # TODO@cnTalon : update statistics in user's row in database
+                # TODO@cnTalon #1 : go to story feedback and somehow pass statistics to the window so it can be displayed
+                # TODO@cnTalon #2 : update statistics in user's row in database
         # endregion
         # region read mispronounced word
         elif match_list[0][2] == 1 or match_list[0][1] == 1: # correct pronunciation
