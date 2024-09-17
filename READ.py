@@ -398,6 +398,7 @@ class readStory(QDialog):
             if not self.incorrect_words and not self.lines: # if end of story
                 self.accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
                 self.statistics_signal.emit([self.accuracy,self.speed]) # TODO@b1gRedDoor #3 : add speed statistic
+                # TODO@b1gRedDoor #6 finish the signals and slots
                 # TODO@cnTalon #2 : pull old statistics and update statistics in user's row in database
                 # TODO@b1gRedDoor #4 : calculate new values for statistics
                 # call finishStory method
