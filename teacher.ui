@@ -161,14 +161,14 @@ font: 10pt &quot;DengXian&quot;; color: rgb(255, 0, 0)</string>
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>380</x>
+      <x>330</x>
       <y>70</y>
       <width>544</width>
       <height>65</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
-     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+     <item>
       <widget class="QLabel" name="label">
        <property name="styleSheet">
         <string notr="true">

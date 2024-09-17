@@ -81,14 +81,14 @@ font: 14pt &quot;DengXian&quot;;</string>
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>320</x>
+      <x>190</x>
       <y>140</y>
-      <width>571</width>
+      <width>821</width>
       <height>80</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
-     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+     <item alignment="Qt::AlignHCenter">
       <widget class="QLabel" name="label">
        <property name="styleSheet">
         <string notr="true">font: 36pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
@@ -103,10 +103,10 @@ font: 14pt &quot;DengXian&quot;;</string>
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>1000</x>
+      <x>940</x>
       <y>20</y>
-      <width>181</width>
-      <height>51</height>
+      <width>241</width>
+      <height>61</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -121,6 +121,19 @@ font: 14pt &quot;DengXian&quot;;</string>
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="logOut">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>730</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Log Out</string>
+    </property>
    </widget>
   </widget>
  </widget>

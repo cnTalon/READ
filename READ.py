@@ -80,28 +80,33 @@ class LoginScreen(QDialog):
             self.errorMsg.setText("Please input all fields.")
 
         else:
-            check = database.child("Admins").child(email.split("@")[0]).get().val()          # looks through Admins category in db and finds the entry
+            check = database.child("Admins").child(email.replace(".", "%20").replace("@", "%40")).get().val()          # looks through Admins category in db and finds the entry
             if check:
                 try:
                     auth.sign_in_with_email_and_password(email, password)
-                except:
-                    self.errorMsg.setText("Incorrect password!")
-                name = database.child("Admins").child(email.split("@")[0]).get().val()       # grab username from database
-                username.append(name['username'])                                            # store username for other windows
-                admin = adminHome()
-                widget.addWidget(admin)
-                widget.setCurrentIndex(widget.currentIndex() + 1)
-            else:
-                try:
-                    auth.sign_in_with_email_and_password(email, password)
+                    username.append(check['username'])                                            # store username for other windows
+                    admin = adminHome()
+                    widget.addWidget(admin)
+                    widget.setCurrentIndex(widget.currentIndex() + 1)
                 except:
                     self.errorMsg.setVisible(True)
-                    self.errorMsg.setText("Invalid username or password!")
-                name = database.child("General Users").child(email.split("@")[0]).get().val()       # grab username from database
-                username.append(name['username'])                                                   # store username for other windows
-                home = homeScreen()
-                widget.addWidget(home)
-                widget.setCurrentIndex(widget.currentIndex() + 1)
+                    self.errorMsg.setText("Invalid password!")
+            else:
+                name = database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).get().val()       # grab username from database
+                if name:
+                    try:
+                        auth.sign_in_with_email_and_password(email, password)
+                        username.append(name['username'])                                                   # store username for other windows
+                        home = homeScreen()
+                        widget.addWidget(home)
+                        widget.setCurrentIndex(widget.currentIndex() + 1)
+                    except:
+                        self.errorMsg.setVisible(True)
+                        self.errorMsg.setText("Invalid password!")
+                else:
+                    self.errorMsg.setVisible(True)
+                    self.errorMsg.setText("Invalid username!")
+                
 
     def goBack(self):
         widget.removeWidget(self)
@@ -131,18 +136,23 @@ class CreateAccScreen(QDialog):
         elif password != confirmpassword:
             self.errorMsg.setText("Passwords do not match.")
         else:
-            try:
-                auth.create_user_with_email_and_password(email, password)
-            except:
-                if len(password) < 6:
-                    self.errorMsg.setText("Minimum 6 character password!")
-                else:
-                    self.errorMsg.setText("Invalid username!")
-            mail.append(email.split("@")[0])                                # save pre @ symbol name for user entry in db
-            emailAddy.append(email)                                         # email address for later use (also for db storage)
-            profile = FillProfileScreen()
-            widget.addWidget(profile)
-            widget.setCurrentIndex(widget.currentIndex() + 1)
+            checkGen = database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).get().val()       
+            checkAdmin = database.child("Admins").child(email.replace(".", "%20").replace("@", "%40")).get().val()            
+            if (checkGen and checkGen['email'] == email) or (checkAdmin and checkAdmin['email'] == email):              # check if emails are in database, if they are do they match the one being used
+                self.errorMsg.setText("Email already in use!")
+            else:
+                try:
+                    auth.create_user_with_email_and_password(email, password)
+                    mail.append(email.replace(".", "%20").replace("@", "%40"))                                          # save name for user entry in db
+                    emailAddy.append(email)                                                                             # email address for later use (also for db storage)
+                    profile = FillProfileScreen()
+                    widget.addWidget(profile)
+                    widget.setCurrentIndex(widget.currentIndex() + 1)
+                except:
+                    if len(password) < 6:
+                        self.errorMsg.setText("Minimum 6 character password!")
+                    else:
+                        self.errorMsg.setText("Email already in use!")
 
 class FillProfileScreen(QDialog):
     # add details to profile (username, first name, last name, date of birth, user type)
@@ -217,6 +227,7 @@ class homeScreen(QDialog):
         self.read.clicked.connect(self.readButton)
         self.stats.clicked.connect(self.statsButton)
         self.profile.setText(username[0])
+        self.logOut.clicked.connect(self.logOutUser)
 
     # takes you to select a difficulty
     def readButton(self):
@@ -229,6 +240,19 @@ class homeScreen(QDialog):
         statistics = userStats()
         widget.addWidget(statistics)
         widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def logOutUser(self):
+        self.clearStack()
+        mail.clear()
+        emailAddy.clear()
+        username.clear()
+        welcome = WelcomeScreen()
+        widget.addWidget(welcome)
+        widget.setCurrentIndex(widget.indexOf(welcome))
+
+    def clearStack(self):
+        while widget.count() > 0:
+            widget.removeWidget(widget.widget(0))
 
     def goBack(self):
         widget.removeWidget(self)
@@ -333,6 +357,8 @@ class readStory(QDialog):
         self.backButton.clicked.connect(self.goBack)
         self.profile.setText(username[0])
         self.warn.setText("")
+        self.instructions.setText("Please read the following line:")
+        self.skipButton.setVisible(False)
 
     def record(self):
         self.recordButton.clicked.connect(self.stopRecord)
@@ -387,11 +413,11 @@ class readStory(QDialog):
         title.clear()
         widget.removeWidget(self)
 
-class lineFeedback(QDialog):
+class storyFeedback(QDialog):
     # gives feedback to user on the read lines
     def __init__(self):
-        super(lineFeedback, self).__init__()
-        loadUi("lineFeedback.ui", self)
+        super(storyFeedback, self).__init__()
+        loadUi("storyFeedback.ui", self)
         #if no error go to next line else try again
         self.next.clicked.connect(self.retry)
 

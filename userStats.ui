@@ -29,7 +29,7 @@ background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379,
    <widget class="QPushButton" name="easy">
     <property name="geometry">
      <rect>
-      <x>150</x>
+      <x>190</x>
       <y>280</y>
       <width>271</width>
       <height>241</height>
@@ -81,7 +81,7 @@ font: 14pt &quot;DengXian&quot;;</string>
    <widget class="QPushButton" name="hard">
     <property name="geometry">
      <rect>
-      <x>440</x>
+      <x>460</x>
       <y>570</y>
       <width>271</width>
       <height>41</height>
