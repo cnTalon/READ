@@ -382,7 +382,7 @@ class readStory(QDialog):
         self.story = Story(contents)
         self.lines = self.story.split_into_sentences()                                             # stores stories line by line
         self.incorrect_words = []
-        self.total_incorrect_words,self.total_words = 0,0
+        self.total_incorrect_words,self.total_words,self.total_time = 0,0,0.0
         
         # initialise wav2vec model
         self.model = wav2vec()
@@ -430,8 +430,9 @@ class readStory(QDialog):
             self.total_incorrect_words += len(self.incorrect_words)
             self.lines.pop(0)
             if not self.incorrect_words and not self.lines: # if end of story
-                self.accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
-                self.statistics_signal.emit([self.accuracy,self.speed]) # TODO@b1gRedDoor #3 : add speed statistic
+                accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
+                speed = self.total_time / len(self.story.split_into_sentences())
+                self.statistics_signal.emit([accuracy,speed]) # TODO@b1gRedDoor #3 : add speed statistic
                 # TODO@b1gRedDoor #6 finish the signals and slots
                 # TODO@cnTalon #2 : pull old statistics and update statistics in user's row in database
                 # oldAccuracy = database.child("General User").child(email.replace(".", "%20")).get().val()['accuracy'] # gets old accuracy from db
