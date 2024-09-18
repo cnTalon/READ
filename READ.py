@@ -146,23 +146,22 @@ class CreateAccScreen(QDialog):
             else:
                 try:
                     auth.create_user_with_email_and_password(email, password)
-                    mail.append(email.replace(".", "%20").replace("@", "%40"))                                          # save name for user entry in db
-                    emailAddy.append(email)                                                                             # email address for later use (also for db storage)
-                    profile = FillProfileScreen()
-                    widget.addWidget(profile)
-                    widget.setCurrentIndex(widget.currentIndex() + 1)
                 except:
                     if len(password) < 6:
                         self.errorMsg.setText("Minimum 6 character password!")
                     else:
                         self.errorMsg.setText("Email already in use!")
+                mail.append(email.replace(".", "%20").replace("@", "%40"))                                          # save name for user entry in db
+                emailAddy.append(email)                                                                             # email address for later use (also for db storage)
+                profile = FillProfileScreen()
+                widget.addWidget(profile)
+                widget.setCurrentIndex(widget.currentIndex() + 1)
 
 class FillProfileScreen(QDialog):
     # add details to profile (username, first name, last name, date of birth, user type)
     def __init__(self):
         super(FillProfileScreen, self).__init__()
         loadUi("profile.ui",self)
-        check = check[0]
         self.signup.clicked.connect(self.profileSetUp)
 
     # takes user entries to save in db
@@ -195,14 +194,12 @@ class FillProfileScreen(QDialog):
             username.append(user)
             if job != "General User":
                 database.child("Admins").child(mail[0]).set(data)             # sends user inputted data to db
-                emailAddy.clear()
                 adHome = adminHome()
                 widget.addWidget(adHome)
                 widget.setCurrentIndex(widget.currentIndex() + 1)
             else:
                 database.child("General Users").child(mail[0]).set(data)      # sends the user inputted data to the database for later use
-                emailAddy.clear()
-                if check is None:                                             # checks if user was added by admin or self
+                if len(check) == 0:                                             # checks if user was added by admin or self
                     home = homeScreen()
                     widget.addWidget(home)
                     widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -340,16 +337,16 @@ class userStats(QDialog):
         super(userStats, self).__init__()
         loadUi("userStats.ui", self)
         self.profile.setText(username[0])
-        self.accuracyDisplay.setText(database.child("General User").child(emailAddy[0].replace(".", "%20")).get().val()['accuracy'])
-        self.speedDisplay.setTest(database.child("General User").child(emailAddy[0].replace(".", "%20")).get().val()['speed'])
+        self.accuracyDisplay.setText("Reading Accuracy:\n" + str(database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).get().val()['accuracy']) + "%")
+        self.speedDisplay.setText("Reading Speed:\n" + str(database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).get().val()['speed']) + "wpm")
         self.backButton.clicked.connect(self.goBack)
         self.resetButton.clicked.connect(self.reset)
     
     def reset(self):
-        database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'accuracy' : 0})
-        database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'total words' : 0})
-        database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'wrong words' : 0})
-        database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'speed' : 0})
+        database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'accuracy' : 0})
+        database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'total words' : 0})
+        database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'wrong words' : 0})
+        database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'speed' : 0})
 
     def goBack(self):
         widget.removeWidget(self)
