@@ -280,6 +280,8 @@ class adminHome(QDialog):
         self.titleField.setVisible(False)
         self.uploadStoryButton.clicked.connect(self.uploadStoryPage)
         self.warn.setVisible(False)
+        self.logOut.clicked.connect(self.logOutAdmin)
+        self.backButton.setVisible(False)
         # insert selection code
 
     def manageUsers(self):
@@ -310,17 +312,18 @@ class adminHome(QDialog):
         self.uploadStoryButton.setVisible(False)
         self.label.setText("Enter Story Title & Contents")
         self.uploadButton.clicked.connect(self.uploadStory)
+        self.logOut.setVisible(False)
+        self.backButton.setVisible(True)
+        self.backButton.clicked.connect(self.goBack)
 
     def uploadStory(self):
         title = self.titleField.text()
         content = self.contentField.text()
 
-        print(title + content)
-
-        if content is None:
+        if len(content) == 0:
             self.warn.setText("Content cannot be blank.")
             self.warn.setVisible(True)
-        elif title is None:
+        elif len(title) == 0:
             self.warn.setText("Title cannot be blank.")
             self.warn.setVisible(True)
         else:
@@ -332,6 +335,22 @@ class adminHome(QDialog):
 
     def checkUserStats(self):
         beep = boop
+
+    def goBack(self):
+        widget.removeWidget(self)
+
+    def logOutAdmin(self):
+        self.clearStack()
+        mail.clear()
+        emailAddy.clear()
+        username.clear()
+        welcome = WelcomeScreen()
+        widget.addWidget(welcome)
+        widget.setCurrentIndex(widget.indexOf(welcome))
+    
+    def clearStack(self):
+        while widget.count() > 0:
+            widget.removeWidget(widget.widget(0))
 
 class difficultySelect(QDialog):
     # display difficulty options
