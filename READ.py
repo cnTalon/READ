@@ -500,6 +500,8 @@ class readStory(QDialog):
                 self.lines.pop(0)
                 if self.incorrect_words: # words mispronounced
                     self.storyText.setText(self.incorrect_words[0])
+                    # TODO@b1gRedDoor #13 show pronunciation of incorrect word
+                    # TODO@b1gRedDoor #14 play audio for correct pronunciation of word
                 elif self.lines: # words correct and story not finished
                     print("fetched next line")
                     self.storyText.setText(self.lines[0])
@@ -507,7 +509,7 @@ class readStory(QDialog):
                     self.recorder.finish_recording()
                     accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
                     speed = self.model.duration / len(self.story.split_into_sentences())
-                    self.statistics_signal.emit(accuracy,speed)
+                    self.statistics_signal.emit(accuracy,speed) # creates next window
                     print(f"statistics: {accuracy:.2f} {speed:.2f}")
                     # TODO@cnTalon #2 : pull old statistics and update statistics in user's row in database
                     # oldAccuracy = database.child("General User").child(email.replace(".", "%20")).get().val()['accuracy'] # gets old accuracy from db
@@ -526,7 +528,10 @@ class readStory(QDialog):
                     self.incorrect_words.pop(0)
                     if self.incorrect_words: # more words to retry
                         self.storyText.setText(self.incorrect_words[0]) 
-                    else: #
+                        # TODO@b1gRedDoor #13 show correct pronunciation
+                        # TODO@b1gRedDoor #14 play audio
+                    else: # mispronounced words finished
+                        # TODO@b1gRedDoor #13 hide pronunciation
                         self.skipButton.hide() # prevent the user from skipping after all incorrect words are finished
                         self.storyText.setText(self.lines[0])
                 else: # mispronounced again
