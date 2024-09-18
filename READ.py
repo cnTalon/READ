@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QDialog, QApplication, QWidget
+from PyQt5.QtWidgets import QDialog, QApplication, QWidget, QMessageBox
 from PyQt5.QtGui import QPixmap
 import pyrebase
 from collections import OrderedDict
@@ -273,16 +273,14 @@ class adminHome(QDialog):
         super(adminHome, self).__init__()
         loadUi("adminHome.ui", self)
         self.userMngmnt.clicked.connect(self.manageUsers)
-        self.uploadButton.setVisible(False)
-        self.contentField.setVisible(False)
-        self.contentLabel.setVisible(False)
-        self.titleLabel.setVisible(False)
-        self.titleField.setVisible(False)
         self.uploadStoryButton.clicked.connect(self.uploadStoryPage)
-        self.warn.setVisible(False)
         self.logOut.clicked.connect(self.logOutAdmin)
-        self.backButton.setVisible(False)
         # insert selection code
+
+    def uploadStoryPage(self):
+        upload = adminUpload()
+        widget.addWidget(upload)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def manageUsers(self):
         self.userMngmnt.setText("Add User")
@@ -302,19 +300,29 @@ class adminHome(QDialog):
         email = self.input.text()                                   # email input by admin
         database.child("General Users").child(email).delete()       # search user in database and remove
 
-    def uploadStoryPage(self):
-        self.uploadButton.setVisible(True)
-        self.contentField.setVisible(True)
-        self.contentLabel.setVisible(True)
-        self.titleLabel.setVisible(True)
-        self.titleField.setVisible(True)
-        self.userMngmnt.setVisible(False)
-        self.uploadStoryButton.setVisible(False)
-        self.label.setText("Enter Story Title & Contents")
+    def checkUserStats(self):
+        beep = boop
+
+    def logOutAdmin(self):
+        self.clearStack()
+        mail.clear()
+        emailAddy.clear()
+        username.clear()
+        welcome = WelcomeScreen()
+        widget.addWidget(welcome)
+        widget.setCurrentIndex(widget.indexOf(welcome))
+    
+    def clearStack(self):
+        while widget.count() > 0:
+            widget.removeWidget(widget.widget(0))
+
+class adminUpload(QDialog):
+    def __init__(self):
+        super(adminUpload, self).__init__()
+        loadUi("adminUpload.ui", self)
         self.uploadButton.clicked.connect(self.uploadStory)
-        self.logOut.setVisible(False)
-        self.backButton.setVisible(True)
         self.backButton.clicked.connect(self.goBack)
+        self.warn.setVisible(False)
 
     def uploadStory(self):
         title = self.titleField.text()
@@ -332,25 +340,15 @@ class adminHome(QDialog):
                 'contents' : content,
             }
             database.child("Story Bank").child(title).set(data)
-
-    def checkUserStats(self):
-        beep = boop
+            msg = QMessageBox()
+            msg.setWindowTitle("Story Upload")
+            msg.setText("This is to let you know your story has been uploaded.")
+            msg.setIcon(QMessageBox.Information)
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
 
     def goBack(self):
         widget.removeWidget(self)
-
-    def logOutAdmin(self):
-        self.clearStack()
-        mail.clear()
-        emailAddy.clear()
-        username.clear()
-        welcome = WelcomeScreen()
-        widget.addWidget(welcome)
-        widget.setCurrentIndex(widget.indexOf(welcome))
-    
-    def clearStack(self):
-        while widget.count() > 0:
-            widget.removeWidget(widget.widget(0))
 
 class difficultySelect(QDialog):
     # display difficulty options
