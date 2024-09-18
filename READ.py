@@ -322,11 +322,13 @@ class adminUpload(QDialog):
         loadUi("adminUpload.ui", self)
         self.uploadButton.clicked.connect(self.uploadStory)
         self.backButton.clicked.connect(self.goBack)
+        self.contentField.setWordWrapMode(True)
+        self.contentField.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.warn.setVisible(False)
 
     def uploadStory(self):
         title = self.titleField.text()
-        content = self.contentField.text()
+        content = self.contentField.toPlainText()
 
         if len(content) == 0:
             self.warn.setText("Content cannot be blank.")

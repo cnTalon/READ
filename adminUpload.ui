@@ -161,19 +161,6 @@ color: rgb(255, 0, 0);</string>
      <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="contentField">
-    <property name="geometry">
-     <rect>
-      <x>350</x>
-      <y>340</y>
-      <width>601</width>
-      <height>311</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="backButton">
     <property name="geometry">
      <rect>
@@ -188,6 +175,25 @@ color: rgb(255, 0, 0);</string>
     </property>
     <property name="text">
      <string>Back</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="contentField">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>340</y>
+      <width>601</width>
+      <height>311</height>
+     </rect>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>16777215</height>
+     </size>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
     </property>
    </widget>
   </widget>
