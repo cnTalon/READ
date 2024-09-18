@@ -357,6 +357,7 @@ class adminUsers(QDialog):
         self.addUser.clicked.connect(self.addNewUser)
         self.removeUser.clicked.connect(self.removeAUser)
         self.viewUsers.clicked.connect(self.userList)
+        self.backButton.clicked.connect(self.goBack)
 
     def addNewUser(self):
         check.append("1")                                           # lets program know admin is trying to add user
@@ -377,20 +378,31 @@ class adminUsers(QDialog):
 
     def checkUserStats(self):
         beep = boop
+    
+    def goBack(self):
+        widget.removeWidget(self)
 
 class adminMngmnt(QDialog):
     def __init__(self):
         super(adminMngmnt, self).__init__()
         loadUi("adminMngmnt.ui", self)
+        self.label.setText("Users in System")
+        self.backButton.clicked.connect(self.goBack)
 
         users = database.child("General Users").get().val()
 
         if users:
             # Iterate over users and add them to the QListWidget
             for username, userData in users.items():
-                self.list.addItem(f"Username: {username} - Name: {userData.get('first name', 'last name')}")
+                first = userData.get('first name')
+                last = userData.get('last name')
+                email = userData.get('email')
+                self.list.addItem(f"Full Name: {first} {last} | Email: {email}")
         else:
             self.list.addItem("No users found.")
+
+    def goBack(self):
+        widget.removeWidget(self)
 
 class difficultySelect(QDialog):
     # display difficulty options
