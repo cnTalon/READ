@@ -151,8 +151,8 @@ class CreateAccScreen(QDialog):
                         self.errorMsg.setText("Minimum 6 character password!")
                     else:
                         self.errorMsg.setText("Email already in use!")
-                mail.append(email.replace(".", "%20").replace("@", "%40"))                                          # save name for user entry in db
-                emailAddy.append(email)                                                                             # email address for later use (also for db storage)
+                #mail.append(email.replace(".", "%20").replace("@", "%40"))                                          # save name for user entry in db
+                emailAddy.append(email.replace(".", "%20").replace("@", "%40"))                                                                             # email address for later use (also for db storage)
                 profile = FillProfileScreen()
                 widget.addWidget(profile)
                 widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -163,6 +163,14 @@ class FillProfileScreen(QDialog):
         super(FillProfileScreen, self).__init__()
         loadUi("profile.ui",self)
         self.signup.clicked.connect(self.profileSetUp)
+        self.emailLabel.setVisible(False)
+        self.emailField.setVisible(False)
+
+        if len(check) > 0:
+            self.emailLabel.setVisible(True)
+            self.emailField.setVisible(True)
+        else:
+            pass
 
     # takes user entries to save in db
     def profileSetUp(self):
@@ -171,6 +179,11 @@ class FillProfileScreen(QDialog):
         last = self.lastname.text()
         birth = self.birthday.text()
         job = self.occupation.currentText()
+        if len(check) == 0:
+            pass
+        else:
+            email = self.emailField.text()
+            emailAddy.append(email)
 
         data = {
                 "username" : user,
@@ -186,24 +199,25 @@ class FillProfileScreen(QDialog):
             }
 
         if job == "Teacher":
-            database.child("Teachers").child(mail[0]).set(data)
+            database.child("Teachers").child(emailAddy[0]).set(data)
             verification = confirmID()
             widget.addWidget(verification)
             widget.setCurrentIndex(widget.currentIndex() + 1)
         else:
             username.append(user)
             if job != "General User":
-                database.child("Admins").child(mail[0]).set(data)             # sends user inputted data to db
+                database.child("Admins").child(emailAddy[0]).set(data)             # sends user inputted data to db
                 adHome = adminHome()
                 widget.addWidget(adHome)
                 widget.setCurrentIndex(widget.currentIndex() + 1)
             else:
-                database.child("General Users").child(mail[0]).set(data)      # sends the user inputted data to the database for later use
+                database.child("General Users").child(emailAddy[0]).set(data)      # sends the user inputted data to the database for later use
                 if len(check) == 0:                                             # checks if user was added by admin or self
                     home = homeScreen()
                     widget.addWidget(home)
                     widget.setCurrentIndex(widget.currentIndex() + 1)
                 else:
+                    auth.create_user_with_email_and_password(emailAddy[0], "default")
                     check.clear()
                     widget.removeWidget(self)                                 # once user is added by admin the page terminates and the admin is notified that the user was added successfully
 
@@ -283,25 +297,9 @@ class adminHome(QDialog):
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def manageUsers(self):
-        self.userMngmnt.setText("Add User")
-        self.stats.setText("Remove User")
-        self.userMngmnt.clicked.connect(self.addUser)
-        self.userMngmnt.clicked.connect(self.removeUser)
-
-    def addUser(self):
-        check.append("1")                                           # lets program know admin is trying to add user
-        newProfile = FillProfileScreen()
-        widget.addWidget(newProfile)
+        manage = adminUsers()
+        widget.addWidget(manage)
         widget.setCurrentIndex(widget.currentIndex() + 1)
-
-    def removeUser(self):
-        # show list of users
-        # prompt removal via text input
-        email = self.input.text()                                   # email input by admin
-        database.child("General Users").child(email).delete()       # search user in database and remove
-
-    def checkUserStats(self):
-        beep = boop
 
     def logOutAdmin(self):
         self.clearStack()
@@ -351,6 +349,48 @@ class adminUpload(QDialog):
 
     def goBack(self):
         widget.removeWidget(self)
+
+class adminUsers(QDialog):
+    def __init__(self):
+        super(adminUsers, self).__init__()
+        loadUi("adminUsers.ui", self)
+        self.addUser.clicked.connect(self.addNewUser)
+        self.removeUser.clicked.connect(self.removeAUser)
+        self.viewUsers.clicked.connect(self.userList)
+
+    def addNewUser(self):
+        check.append("1")                                           # lets program know admin is trying to add user
+        newProfile = FillProfileScreen()
+        widget.addWidget(newProfile)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def removeAUser(self):
+        # show list of users
+        # prompt removal via text input
+        email = self.input.text()                                   # email input by admin
+        database.child("General Users").child(email).delete()       # search user in database and remove
+
+    def userList(self):
+        list = adminMngmnt()
+        widget.addWidget(list)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def checkUserStats(self):
+        beep = boop
+
+class adminMngmnt(QDialog):
+    def __init__(self):
+        super(adminMngmnt, self).__init__()
+        loadUi("adminMngmnt.ui", self)
+
+        users = database.child("General Users").get().val()
+
+        if users:
+            # Iterate over users and add them to the QListWidget
+            for username, userData in users.items():
+                self.list.addItem(f"Username: {username} - Name: {userData.get('first name', 'last name')}")
+        else:
+            self.list.addItem("No users found.")
 
 class difficultySelect(QDialog):
     # display difficulty options
@@ -475,7 +515,6 @@ class readStory(QDialog):
             sentence = self.lines[0]
         else:
             sentence = self.incorrect_words[0]
-        
         
         print("analysis")
         self.model.load_audio(self.recorder.getFilename())

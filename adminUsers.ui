@@ -26,10 +26,10 @@
     <string notr="true">QWidget#bgwidget{
 background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379, y2:0.977, stop:0 rgb(255, 183, 119), stop:1 rgba(255, 255, 255, 255));}</string>
    </property>
-   <widget class="QPushButton" name="userMngmnt">
+   <widget class="QPushButton" name="addUser">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>160</x>
       <y>280</y>
       <width>271</width>
       <height>241</height>
@@ -41,29 +41,13 @@ background-color: rgb(170, 255, 255);
 font: 14pt &quot;DengXian&quot;;</string>
     </property>
     <property name="text">
-     <string>Manage Users</string>
+     <string>Add User</string>
     </property>
    </widget>
-   <widget class="QLabel" name="errorMsg">
+   <widget class="QPushButton" name="removeUser">
     <property name="geometry">
      <rect>
-      <x>440</x>
-      <y>450</y>
-      <width>341</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">font: 12pt &quot;DengXian&quot;; color :red;</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="uploadStoryButton">
-    <property name="geometry">
-     <rect>
-      <x>740</x>
+      <x>760</x>
       <y>280</y>
       <width>271</width>
       <height>241</height>
@@ -75,7 +59,7 @@ background-color: rgb(170, 255, 255);
 font: 14pt &quot;DengXian&quot;;</string>
     </property>
     <property name="text">
-     <string>Upload Story</string>
+     <string>Remove User</string>
     </property>
    </widget>
    <widget class="QWidget" name="verticalLayoutWidget">
@@ -122,17 +106,38 @@ font: 14pt &quot;DengXian&quot;;</string>
      </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="logOut">
+   <widget class="QPushButton" name="viewUsers">
     <property name="geometry">
      <rect>
-      <x>550</x>
-      <y>730</y>
-      <width>93</width>
-      <height>28</height>
+      <x>460</x>
+      <y>280</y>
+      <width>271</width>
+      <height>241</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">border-radius:20px;
+background-color: rgb(170, 255, 255);
+font: 14pt &quot;DengXian&quot;;</string>
+    </property>
     <property name="text">
-     <string>Log Out</string>
+     <string>View Users</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="backButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>101</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Back</string>
     </property>
    </widget>
   </widget>
