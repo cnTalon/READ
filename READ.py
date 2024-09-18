@@ -371,7 +371,7 @@ class storyDisplay(QDialog):
         widget.removeWidget(self)
 
 class readStory(QDialog):
-    statistics_signal = pyqtSignal(list[float])
+    # statistics_signal = pyqtSignal(list[float])
     # shows the story line by line and allows recording of the audio at button presses
     def __init__(self):
         super(readStory, self).__init__()
