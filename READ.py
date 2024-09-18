@@ -371,7 +371,7 @@ class storyDisplay(QDialog):
         widget.removeWidget(self)
 
 class readStory(QDialog):
-    # statistics_signal = pyqtSignal(list[float])
+    statistics_signal = pyqtSignal(int,int,float)
     # shows the story line by line and allows recording of the audio at button presses
     def __init__(self):
         super(readStory, self).__init__()
@@ -382,7 +382,7 @@ class readStory(QDialog):
         self.story = Story(contents)
         self.lines = self.story.split_into_sentences()                                             # stores stories line by line
         self.incorrect_words = []
-        self.total_incorrect_words,self.total_words = 0,0
+        self.total_incorrect_words,self.total_words,self.total_time = 0,0,0.0
         
         # initialise wav2vec model
         self.model = wav2vec()
@@ -391,6 +391,7 @@ class readStory(QDialog):
         self.storyText.setText(self.lines[0])
         self.recordButton.clicked.connect(self.record)
         self.backButton.clicked.connect(self.goBack)
+        self.statistics_signal.connect(self.finishStory)
         self.profile.setText(username[0])
         self.warn.setText("")
         self.instructions.setText("Please read the following line:")
@@ -405,7 +406,7 @@ class readStory(QDialog):
     def stopRecord(self):
         self.recordButton.clicked.disconnect() # stop button from doing anything while processing
         self.recorder.stop_recording()
-        self.warn.setText("PLEASE WAIT")
+        self.warn.setText("ANALYSING, PLEASE WAIT...")
         # TODO@b1gRedDoor #5 : give user feedback that it will take a while
         
         if not self.incorrect_words: # incorrect words is empty
@@ -430,8 +431,9 @@ class readStory(QDialog):
             self.total_incorrect_words += len(self.incorrect_words)
             self.lines.pop(0)
             if not self.incorrect_words and not self.lines: # if end of story
-                self.accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
-                self.statistics_signal.emit([self.accuracy,self.speed]) # TODO@b1gRedDoor #3 : add speed statistic
+                accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
+                speed = self.total_time / len(self.story.split_into_sentences())
+                self.statistics_signal.emit(accuracy,speed)
                 # TODO@b1gRedDoor #6 finish the signals and slots
                 # TODO@cnTalon #2 : pull old statistics and update statistics in user's row in database
                 # oldAccuracy = database.child("General User").child(email.replace(".", "%20")).get().val()['accuracy'] # gets old accuracy from db
@@ -442,6 +444,7 @@ class readStory(QDialog):
                 # database.child("General User").child(email.replace(".", "%20")).update({'total words' : totalWords})  # update with new total words
                 # database.child("General User").child(email.replace(".", "%20")).update({'accuracy' : accuracy})       # updating the database entry accuracy to the current accuracy
                 # TODO@b1gRedDoor #4 : calculate new values for statistics
+                self.recorder.finish_recording()
                 # call finishStory method
         # endregion
         # region read mispronounced word
@@ -468,8 +471,8 @@ class readStory(QDialog):
     # else call finishStory method
 
     # TODO@cnTalon #1 : make method finishStory() that go to story feedback and somehow pass statistics to the window so it can be displayed
-    def finishStory(self):
-        feedback = storyFeedback()
+    def finishStory(self,accuracy,speed):
+        feedback = storyFeedback(accuracy,speed)
         widget.addWidget(feedback)
         widget.setCurrentIndex(widget.currentIndex() + 1)
     
@@ -486,8 +489,9 @@ class storyFeedback(QDialog):
         #if no error go to next line else try again
         self.next.clicked.connect(self.retry)
 
-    def retry(self):
-        pass
+    def displayFeedback(self,accuracy,speed):
+        self.accuracyLabel.setText(f"Accuracy: {accuracy * 100:.2f}%")
+        self.speedLabel.setText(f"Speed: {speed:.2f} seconds per line")
 
 # main
 if __name__ == "__main__":
