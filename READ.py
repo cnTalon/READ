@@ -371,7 +371,7 @@ class storyDisplay(QDialog):
         widget.removeWidget(self)
 
 class readStory(QDialog):
-    statistics_signal = pyqtSignal(list[float])
+    statistics_signal = pyqtSignal(int,int,float)
     # shows the story line by line and allows recording of the audio at button presses
     def __init__(self):
         super(readStory, self).__init__()
@@ -405,7 +405,7 @@ class readStory(QDialog):
     def stopRecord(self):
         self.recordButton.clicked.disconnect() # stop button from doing anything while processing
         self.recorder.stop_recording()
-        self.warn.setText("PLEASE WAIT")
+        self.warn.setText("ANALYSING, PLEASE WAIT...")
         # TODO@b1gRedDoor #5 : give user feedback that it will take a while
         
         if not self.incorrect_words: # incorrect words is empty
