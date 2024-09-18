@@ -31,7 +31,7 @@ class wav2vec:
 
     def load_audio(self, file_name):
         self.audio, self.rate = librosa.load(file_name, sr=16000)
-        self.duration = librosa.get_duration(y=self.audio, sr=16000)
+        self.duration += librosa.get_duration(y=self.audio, sr=16000)
 
     def get_values(self):
         IPA_values = self.toIPA_tokenizer(self.audio, return_tensors="pt").input_values
