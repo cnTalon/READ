@@ -99,6 +99,7 @@ class LoginScreen(QDialog):
                     try:
                         auth.sign_in_with_email_and_password(email, password)
                         username.append(name['username'])                                                   # store username for other windows
+                        emailAddy.append(email)                                                             # store email for other windows
                         home = homeScreen()
                         widget.addWidget(home)
                         widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -339,7 +340,16 @@ class userStats(QDialog):
         super(userStats, self).__init__()
         loadUi("userStats.ui", self)
         self.profile.setText(username[0])
+        self.accuracyDisplay.setText(database.child("General User").child(emailAddy[0].replace(".", "%20")).get().val()['accuracy'])
+        self.speedDisplay.setTest(database.child("General User").child(emailAddy[0].replace(".", "%20")).get().val()['speed'])
         self.backButton.clicked.connect(self.goBack)
+        self.resetButton.clicked.connect(self.reset)
+    
+    def reset(self):
+        database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'accuracy' : 0})
+        database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'total words' : 0})
+        database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'wrong words' : 0})
+        database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'speed' : 0})
 
     def goBack(self):
         widget.removeWidget(self)
