@@ -416,8 +416,8 @@ class readStory(QDialog):
 
     def stopRecord(self):
         self.recordButton.clicked.disconnect() # stop button from doing anything while processing
-        self.warn.setText("ANALYSING, PLEASE WAIT...")
         self.recorder.stop_recording()
+        self.warn.setText("ANALYSING, PLEASE WAIT...")
         # TODO@b1gRedDoor #5 : give user feedback that it will take a while
         
         if not self.incorrect_words: # incorrect words is empty
@@ -425,7 +425,7 @@ class readStory(QDialog):
         else:
             sentence = self.incorrect_words[0]
         
-        # region | analysis
+        
         print("analysis")
         self.model.load_audio(self.recorder.getFilename())
         self.model.get_values()
@@ -433,32 +433,26 @@ class readStory(QDialog):
         eng_input = self.model.word_transcription
         ipa_expected = IPAmatching.IPA_correction(IPAmatching.ipa_transcription(sentence))
         match_list = IPAmatching.pronunciation_matching(eng_input[0],ipa_input[0],ipa_expected.split(),sentence)
-        # endregion
         print(match_list)
+        
+        
         match self.incorrect_words:
-            case []:
+            case []: # read sentence
                 print("sentence was read")
-                for word in match_list:
-                    if word[1] == 0 and word[2] == 0: # word was pronounced incorrectly
+                for word in match_list: # FIXME #12 this abomination
+                    if word[2] == '0': # word was pronounced incorrectly
+                        print(f"{word[0]} {word[2]}")
                         self.incorrect_words.append(word[0])
                 print(self.incorrect_words)
                 self.total_words += len(match_list)
                 self.total_incorrect_words += len(self.incorrect_words)
+                self.lines.pop(0)
                 if self.incorrect_words: # words mispronounced
                     self.storyText.setText(self.incorrect_words[0])
-                    # FIXME@b1gRedDoor #9 words in sentence mispronounced path
-                    
-
-                
-                # region | words correct
-                # region | lines not empty
-                elif self.lines:
+                elif self.lines: # words correct and story not finished
                     print("fetched next line")
                     self.storyText.setText(self.lines[0])
-                # endregion
-                
-                # region | story finished
-                else:
+                else: # words correct and story finished
                     self.recorder.finish_recording()
                     accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
                     speed = self.total_time / len(self.story.split_into_sentences())
@@ -477,23 +471,21 @@ class readStory(QDialog):
                 # endregion
             case _: # read mispronounced word
                 print("mispronounced word read")
-                if match_list[0][2] == 1 or match_list[0][1] == 1: # correct pronunciation
+                if match_list[0][2] == '1': # correct pronunciation
                     self.incorrect_words.pop(0)
                     if self.incorrect_words: # more words to retry
                         self.storyText.setText(self.incorrect_words[0]) 
                     else: #
                         self.skipButton.hide() # prevent the user from skipping after all incorrect words are finished
-                        self.lines.pop(0)
                         self.storyText.setText(self.lines[0])
                 else: # mispronounced again
                     print("mispronounced word read")
                     self.skipButton.show() # allow the user to skip
 
-        # TODO if story is finished
         self.warn.hide()
         self.recordButton.clicked.connect(self.record)
         
-    # TODO@b1gRedDoor : skipButton
+    # TODO@b1gRedDoor #11 skipButton
     # if more incorrect words, display next
     # if more sentences, display next
     # else call finishStory method
