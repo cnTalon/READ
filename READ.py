@@ -5,7 +5,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUi
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QDialog, QApplication, QWidget, QMessageBox
+from PyQt5.QtWidgets import QDialog, QApplication, QWidget, QMessageBox, QInputDialog
 from PyQt5.QtGui import QPixmap
 import pyrebase
 from collections import OrderedDict
@@ -366,10 +366,37 @@ class adminUsers(QDialog):
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def removeAUser(self):
-        # show list of users
-        # prompt removal via text input
-        email = self.input.text()                                   # email input by admin
-        database.child("General Users").child(email).delete()       # search user in database and remove
+        email, ok = QInputDialog.getText(self, "Deleting User", "Enter user email to delete:")
+        if email and ok:
+            if database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).get().val() is not None:
+                database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).remove()       # search user in database and remove
+                # TODO delete from firebase authentication as well
+                try:
+                    user_record = auth.get_user_by_email(email)
+                    auth.delete_user(user_record.uid)
+                except Exception as e:
+                    print(f"Error deleting user from authentication: {e}")
+                msg = QMessageBox()
+                msg.setWindowTitle("User Deleted")
+                msg.setText("The user specified has been removed from the System.")
+                msg.setIcon(QMessageBox.Information)
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.exec_()
+            else:
+                msg = QMessageBox()
+                msg.setWindowTitle("Error")
+                msg.setText("User does not exist.")
+                msg.setIcon(QMessageBox.Information)
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.exec_()
+        else:
+            msg = QMessageBox()
+            msg.setWindowTitle("Error")
+            msg.setText("Please enter an email.")
+            msg.setIcon(QMessageBox.Information)
+            msg.setStandardButtons(QMessageBox.Ok)
+            msg.exec_()
+
 
     def userList(self):
         list = adminMngmnt()
