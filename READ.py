@@ -211,7 +211,7 @@ class FillProfileScreen(QDialog):
                 widget.addWidget(adHome)
                 widget.setCurrentIndex(widget.currentIndex() + 1)
             else:
-                database.child("General Users").child(emailAddy[0]).set(data)      # sends the user inputted data to the database for later use
+                database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).set(data)      # sends the user inputted data to the database for later use
                 if len(check) == 0:                                             # checks if user was added by admin or self
                     home = homeScreen()
                     widget.addWidget(home)
