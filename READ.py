@@ -398,23 +398,25 @@ class readStory(QDialog):
         self.skipButton.setVisible(False)
 
     def record(self):
-        self.recordButton.clicked.connect(self.stopRecord)
+        self.recordButton.clicked.disconnect()
+        self.recorder.start_recording()
         self.warn.setText("RECORDING...")
         self.warn.show()
-        self.recorder.start_recording()
+        self.recordButton.clicked.connect(self.stopRecord)
 
     def stopRecord(self):
         self.recordButton.clicked.disconnect() # stop button from doing anything while processing
-        self.recorder.stop_recording()
         self.warn.setText("ANALYSING, PLEASE WAIT...")
+        self.recorder.stop_recording()
         # TODO@b1gRedDoor #5 : give user feedback that it will take a while
         
         if not self.incorrect_words: # incorrect words is empty
-            sentence = self.lines[0]
+            sentence = self.lines.pop(0)
         else:
             sentence = self.incorrect_words[0]
         
         # region analysis
+        print("analysis")
         self.model.load_audio(self.recorder.getFilename())
         self.model.get_values()
         ipa_input = self.model.IPA_transcription
@@ -422,19 +424,33 @@ class readStory(QDialog):
         ipa_expected = IPAmatching.IPA_correction(IPAmatching.ipa_transcription(sentence))
         match_list = IPAmatching.pronunciation_matching(eng_input[0],ipa_input[0],ipa_expected.split(),sentence)
         # endregion
+        print(match_list)
         # region read sentence
-        if not self.incorrect_words: # user reads sentence
+        if not self.incorrect_words:
+            print("sentence was read")
             for word in match_list:
                 if word[1] == 0 and word[2] == 0: # word was pronounced incorrectly
                     self.incorrect_words.append(word[0])
+            print(self.incorrect_words)
             self.total_words += len(match_list)
             self.total_incorrect_words += len(self.incorrect_words)
-            self.lines.pop(0)
-            if not self.incorrect_words and not self.lines: # if end of story
+            # self.lines.pop(0)
+            # region words mispronounced
+            if self.incorrect_words: # words mispronounced
+                self.storyText.setText(self.incorrect_words[0])
+                # FIXME@b1gRedDoor #9 words in sentence mispronounced path
+            # endregion
+            # region story not finished
+            elif self.lines: # story not finished
+                print("fetched next line")
+                self.storyText.setText(self.lines[0])
+            # endregion
+            # region story finished
+            else:
                 accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
                 speed = self.total_time / len(self.story.split_into_sentences())
                 self.statistics_signal.emit(accuracy,speed)
-                # TODO@b1gRedDoor #6 finish the signals and slots
+                print(f"statistics: {accuracy:.2f} {speed:.2f}")
                 # TODO@cnTalon #2 : pull old statistics and update statistics in user's row in database
                 # oldAccuracy = database.child("General User").child(email.replace(".", "%20")).get().val()['accuracy'] # gets old accuracy from db
                 # perform calculation
@@ -446,18 +462,20 @@ class readStory(QDialog):
                 # TODO@b1gRedDoor #4 : calculate new values for statistics
                 self.recorder.finish_recording()
                 # call finishStory method
+            # endregion
         # endregion
         # region read mispronounced word
         elif match_list[0][2] == 1 or match_list[0][1] == 1: # correct pronunciation
-            
+            print("mispronounced word read")
             self.incorrect_words.pop(0)
             if self.incorrect_words: # more words to retry
                 self.storyText.setText(self.incorrect_words[0])
             else:
                 self.skipButton.hide() # prevent the user from skipping after all incorrect words are finished
-                self.lines.pop(0)
+                # self.lines.pop(0)
                 self.storyText.setText(self.lines[0])
         else: # mispronounced again
+            print("mispronounced word read")
             self.skipButton.show() # allow the user to skip
         # endregion
         
