@@ -392,7 +392,7 @@ class readStory(QDialog):
         self.story = Story(contents)
         self.lines = self.story.split_into_sentences()                                             # stores stories line by line
         self.incorrect_words = []
-        self.total_incorrect_words,self.total_words,self.total_time = 0,0,0.0
+        self.total_incorrect_words,self.total_words = 0,0
         
         # initialise wav2vec model
         self.model = wav2vec()
@@ -439,7 +439,7 @@ class readStory(QDialog):
         match self.incorrect_words:
             case []: # read sentence
                 print("sentence was read")
-                for word in match_list: # FIXME #12 this abomination
+                for word in match_list: # FIXME@b1gRedDoor #12 this abomination
                     if word[2] == '0': # word was pronounced incorrectly
                         print(f"{word[0]} {word[2]}")
                         self.incorrect_words.append(word[0])
@@ -455,7 +455,7 @@ class readStory(QDialog):
                 else: # words correct and story finished
                     self.recorder.finish_recording()
                     accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
-                    speed = self.total_time / len(self.story.split_into_sentences())
+                    speed = self.model.duration / len(self.story.split_into_sentences())
                     self.statistics_signal.emit(accuracy,speed)
                     print(f"statistics: {accuracy:.2f} {speed:.2f}")
                     # TODO@cnTalon #2 : pull old statistics and update statistics in user's row in database
