@@ -273,6 +273,13 @@ class adminHome(QDialog):
         super(adminHome, self).__init__()
         loadUi("adminHome.ui", self)
         self.userMngmnt.clicked.connect(self.manageUsers)
+        self.uploadButton.setVisible(False)
+        self.contentField.setVisible(False)
+        self.contentLabel.setVisible(False)
+        self.titleLabel.setVisible(False)
+        self.titleField.setVisible(False)
+        self.uploadStoryButton.clicked.connect(self.uploadStoryPage)
+        self.warn.setVisible(False)
         # insert selection code
 
     def manageUsers(self):
@@ -293,10 +300,38 @@ class adminHome(QDialog):
         email = self.input.text()                                   # email input by admin
         database.child("General Users").child(email).delete()       # search user in database and remove
 
+    def uploadStoryPage(self):
+        self.uploadButton.setVisible(True)
+        self.contentField.setVisible(True)
+        self.contentLabel.setVisible(True)
+        self.titleLabel.setVisible(True)
+        self.titleField.setVisible(True)
+        self.userMngmnt.setVisible(False)
+        self.uploadStoryButton.setVisible(False)
+        self.label.setText("Enter Story Title & Contents")
+        self.uploadButton.clicked.connect(self.uploadStory)
+
+    def uploadStory(self):
+        title = self.titleField.text()
+        content = self.contentField.text()
+
+        print(title + content)
+
+        if content is None:
+            self.warn.setText("Content cannot be blank.")
+            self.warn.setVisible(True)
+        elif title is None:
+            self.warn.setText("Title cannot be blank.")
+            self.warn.setVisible(True)
+        else:
+            data = {
+                'title' : title,
+                'contents' : content,
+            }
+            database.child("Story Bank").child(title).set(data)
+
     def checkUserStats(self):
         beep = boop
-
-        
 
 class difficultySelect(QDialog):
     # display difficulty options
@@ -343,10 +378,10 @@ class userStats(QDialog):
         self.resetButton.clicked.connect(self.reset)
     
     def reset(self):
-        database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'accuracy' : 0})
-        database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'total words' : 0})
-        database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'wrong words' : 0})
-        database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'speed' : 0})
+        database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'accuracy' : 0})
+        database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'total words' : 0})
+        database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'wrong words' : 0})
+        database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'speed' : 0})
 
     def goBack(self):
         widget.removeWidget(self)
