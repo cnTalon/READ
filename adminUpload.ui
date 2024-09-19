@@ -45,20 +45,20 @@ background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379,
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>190</y>
-      <width>751</width>
-      <height>321</height>
+      <x>250</x>
+      <y>150</y>
+      <width>702</width>
+      <height>80</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
-     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QLabel" name="storyText">
+     <item alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="label">
        <property name="styleSheet">
         <string notr="true">font: 36pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
        </property>
        <property name="text">
-        <string>Line of Story Goes Here</string>
+        <string>Enter Title &amp; Content</string>
        </property>
       </widget>
      </item>
@@ -67,9 +67,9 @@ background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379,
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>940</x>
-      <y>10</y>
-      <width>241</width>
+      <x>1020</x>
+      <y>20</y>
+      <width>160</width>
       <height>51</height>
      </rect>
     </property>
@@ -80,46 +80,86 @@ background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379,
         <string notr="true">font: 18pt &quot;DengXian&quot;; color: rgb(0, 0, 0)</string>
        </property>
        <property name="text">
-        <string>Username Here</string>
+        <string>Admin</string>
        </property>
       </widget>
      </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="recordButton">
+   <widget class="QLabel" name="titleLabel">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>250</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Enter Title:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="contentLabel">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>330</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
+    </property>
+    <property name="text">
+     <string>Contents:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="uploadButton">
     <property name="geometry">
      <rect>
       <x>550</x>
-      <y>580</y>
-      <width>75</width>
-      <height>23</height>
+      <y>700</y>
+      <width>93</width>
+      <height>28</height>
      </rect>
     </property>
     <property name="text">
-     <string>Record</string>
+     <string>Upload</string>
     </property>
    </widget>
-   <widget class="QWidget" name="verticalLayoutWidget_3">
+   <widget class="QLabel" name="warn">
     <property name="geometry">
      <rect>
-      <x>480</x>
-      <y>620</y>
-      <width>221</width>
-      <height>41</height>
+      <x>350</x>
+      <y>660</y>
+      <width>291</width>
+      <height>16</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_3">
-     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QLabel" name="warn">
-       <property name="styleSheet">
-        <string notr="true">font: 14pt &quot;DengXian&quot;;</string>
-       </property>
-       <property name="text">
-        <string>RECORDING...</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <property name="styleSheet">
+     <string notr="true">font: 10pt &quot;DengXian&quot;;
+color: rgb(255, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="titleField">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>261</y>
+      <width>601</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
+    </property>
    </widget>
    <widget class="QPushButton" name="backButton">
     <property name="geometry">
@@ -137,52 +177,23 @@ background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379,
      <string>Back</string>
     </property>
    </widget>
-   <widget class="QWidget" name="verticalLayoutWidget_4">
+   <widget class="QTextEdit" name="contentField">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>120</y>
-      <width>751</width>
-      <height>51</height>
+      <x>350</x>
+      <y>340</y>
+      <width>601</width>
+      <height>311</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_4">
-     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QLabel" name="instructions">
-       <property name="styleSheet">
-        <string notr="true">font: 18pt &quot;DengXian&quot;;</string>
-       </property>
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QPushButton" name="skipButton">
-    <property name="geometry">
-     <rect>
-      <x>550</x>
-      <y>540</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
+    <property name="maximumSize">
+     <size>
+      <width>16777215</width>
+      <height>16777215</height>
+     </size>
     </property>
-    <property name="text">
-     <string>Skip</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="playIPA">
-    <property name="geometry">
-     <rect>
-      <x>550</x>
-      <y>500</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Play IPA</string>
+    <property name="styleSheet">
+     <string notr="true">font: 12pt &quot;DengXian&quot;;</string>
     </property>
    </widget>
   </widget>

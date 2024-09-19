@@ -8,10 +8,11 @@ packages = [
     "nltk",
     "pyaudio",
     "librosa",
-    "torch"
+    "torch",
+    "espeakng"
 ]
 
-def install_packages():
+def installPackages():
     for package in packages:
         try:
             subprocess.check_call([sys.executable, "-m", "pip", "install", package])
@@ -21,7 +22,7 @@ def install_packages():
 
 def main():
     # ensure required packages are installed
-    install_packages()
+    installPackages()
 
     print("Running the main program...")
 

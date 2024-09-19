@@ -14,8 +14,7 @@ class AudioRecorder(threading.Thread):
 																		channels=self._channels,
 																		rate=self._rate,
 																		input=True,
-																		frames_per_buffer=self._frames_per_buffer,
-																		start=False) # stream started by start_recording()
+																		frames_per_buffer=self._frames_per_buffer)
 		self._frames = []
 		self._recording_event = threading.Event() # false by default
 		self._finished_flag = False # thread exists until story is finished
@@ -23,14 +22,14 @@ class AudioRecorder(threading.Thread):
 	
 	def start_recording(self):
 		if self._stream is None: return print("no stream in recording start attempt")
-		self._stream.start_stream()
 		self._recording_event.set()
+		print("recording")
 	
 	
 	def stop_recording(self):
 		if self._stream is None: return print("no stream in recording stop attempt")
 		self._recording_event.clear()
-		self._stream.stop_stream()
+		print("stopped")
 		self._save_recording()
 	
 	
@@ -46,6 +45,7 @@ class AudioRecorder(threading.Thread):
 	def finish_recording(self):
 		self._finished_flag = True
 		self._recording_event.set()
+		print("done")
 	
 	
 	def getFilename(self):
@@ -71,15 +71,14 @@ class AudioRecorder(threading.Thread):
 if __name__ == "__main__":
 	recorder = AudioRecorder()									# step 1 : make new object
 	recorder.start()														# step 2 : start thread
-	recorder.start_recording()									# step 3 : start the recording i.e. via pressing a button on screen
-	print("recording")
-	try:
-		while True:
+	for _ in range(int(input("input: "))):
+		print(_)
+		recorder.start_recording()									# step 3 : start the recording i.e. via pressing a button on screen
+		try:
+			while True:
+				pass
+		except KeyboardInterrupt:
 			pass
-	except KeyboardInterrupt:
-		pass
-	recorder.stop_recording()										# step 5 : stop the recording i.e. via pressing a buttton on screen
-	print("stopped")
+		recorder.stop_recording()										# step 5 : stop the recording i.e. via pressing a buttton on screen
 	recorder.finish_recording()									# step 6 : repeat steps 3 and 4 until end of story, finally finish recording to end thread's lifecycle
-	print("done")
 	recorder.join()

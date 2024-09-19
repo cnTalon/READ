@@ -102,7 +102,7 @@ background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379,
      <string>Back</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="next">
+   <widget class="QPushButton" name="home">
     <property name="geometry">
      <rect>
       <x>550</x>
@@ -112,7 +112,7 @@ background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379,
      </rect>
     </property>
     <property name="text">
-     <string>Next</string>
+     <string>Home</string>
     </property>
    </widget>
   </widget>
