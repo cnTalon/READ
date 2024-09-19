@@ -172,6 +172,19 @@ background-color:qlineargradient(spread:pad, x1:0.091, y1:0.101636, x2:0.991379,
      <string>Skip</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="playIPA">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>500</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Play IPA</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
