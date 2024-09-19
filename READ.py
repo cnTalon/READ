@@ -203,14 +203,14 @@ class FillProfileScreen(QDialog):
             }
 
         if job == "Teacher":
-            database.child("Teachers").child(emailAddy[0]).set(data)
+            database.child("Teachers").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).set(data)
             verification = confirmID()
             widget.addWidget(verification)
             widget.setCurrentIndex(widget.currentIndex() + 1)
         else:
             userName.append(user)
             if job != "General User":
-                database.child("Admins").child(emailAddy[0]).set(data)             # sends user inputted data to db
+                database.child("Admins").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).set(data)             # sends user inputted data to db
                 adHome = adminHome()
                 widget.addWidget(adHome)
                 widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -738,6 +738,7 @@ if __name__ == "__main__":
     welcome = WelcomeScreen()               # start the program with the welcome screen
     widget = QtWidgets.QStackedWidget()     # start a stack for the widgets
     widget.addWidget(welcome)
+    widget.setWindowTitle("Automatic Reading Tutor")
     widget.setFixedHeight(800)
     widget.setFixedWidth(1200)
     widget.show()
