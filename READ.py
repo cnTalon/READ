@@ -40,9 +40,9 @@ authenticate = firebase.auth()                          # setup user authenticat
 diff = []                                               # difficulty level
 mail = []                                               # name of email
 emailAddy = []                                          # email address
-username = []                                           # user's name
+userName = []                                           # user's name
 title = []                                              # story title
-check = []
+check = []                                              # used to check if the user is an admin or not
 
 class WelcomeScreen(QDialog):
     # user can either log in
@@ -88,7 +88,7 @@ class LoginScreen(QDialog):
             if check:
                 try:
                     authenticate.sign_in_with_email_and_password(email, password)
-                    username.append(check['username'])                                            # store username for other windows
+                    userName.append(check['username'])                                            # store username for other windows
                     admin = adminHome()
                     widget.addWidget(admin)
                     widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -100,7 +100,7 @@ class LoginScreen(QDialog):
                 if name:
                     try:
                         authenticate.sign_in_with_email_and_password(email, password)
-                        username.append(name['username'])                                                   # store username for other windows
+                        userName.append(name['username'])                                                   # store username for other windows
                         emailAddy.append(email)                                                             # store email for other windows
                         home = homeScreen()
                         widget.addWidget(home)
@@ -120,7 +120,6 @@ class CreateAccScreen(QDialog):
     # user can either input details (username, new password, password again to confirm its correct) to create account
     # or
     # go back
-
     def __init__(self):
         super(CreateAccScreen, self).__init__()
         loadUi("signup.ui",self)
@@ -154,8 +153,7 @@ class CreateAccScreen(QDialog):
                         self.errorMsg.setText("Minimum 6 character password!")
                     else:
                         self.errorMsg.setText("Email already in use!")
-                #mail.append(email.replace(".", "%20").replace("@", "%40"))                                          # save name for user entry in db
-                emailAddy.append(email.replace(".", "%20").replace("@", "%40"))                                                                             # email address for later use (also for db storage)
+                emailAddy.append(email)                                                                             # email address for later use (also for db storage)
                 profile = FillProfileScreen()
                 widget.addWidget(profile)
                 widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -210,7 +208,7 @@ class FillProfileScreen(QDialog):
             widget.addWidget(verification)
             widget.setCurrentIndex(widget.currentIndex() + 1)
         else:
-            username.append(user)
+            userName.append(user)
             if job != "General User":
                 database.child("Admins").child(emailAddy[0]).set(data)             # sends user inputted data to db
                 adHome = adminHome()
@@ -255,7 +253,7 @@ class homeScreen(QDialog):
         loadUi("home.ui", self)
         self.read.clicked.connect(self.readButton)
         self.stats.clicked.connect(self.statsButton)
-        self.profile.setText(username[0])
+        self.profile.setText(userName[0])
         self.logOut.clicked.connect(self.logOutUser)
 
     # takes you to select a difficulty
@@ -274,7 +272,7 @@ class homeScreen(QDialog):
         self.clearStack()
         mail.clear()
         emailAddy.clear()
-        username.clear()
+        userName.clear()
         welcome = WelcomeScreen()
         widget.addWidget(welcome)
         widget.setCurrentIndex(widget.indexOf(welcome))
@@ -295,7 +293,7 @@ class adminHome(QDialog):
         self.userMngmnt.clicked.connect(self.manageUsers)
         self.uploadStoryButton.clicked.connect(self.uploadStoryPage)
         self.logOut.clicked.connect(self.logOutAdmin)
-        self.profile.setText(username[0])
+        self.profile.setText(userName[0])
         # insert selection code
 
     def uploadStoryPage(self):
@@ -312,7 +310,7 @@ class adminHome(QDialog):
         self.clearStack()
         mail.clear()
         emailAddy.clear()
-        username.clear()
+        userName.clear()
         welcome = WelcomeScreen()
         widget.addWidget(welcome)
         widget.setCurrentIndex(widget.indexOf(welcome))
@@ -330,7 +328,7 @@ class adminUpload(QDialog):
         self.contentField.setWordWrapMode(True)
         self.contentField.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.warn.setVisible(False)
-        self.profile.setText(username[0])
+        self.profile.setText(userName[0])
 
     def uploadStory(self):
         title = self.titleField.text()
@@ -366,7 +364,7 @@ class adminUsers(QDialog):
         self.removeUser.clicked.connect(self.removeAUser)
         self.viewUsers.clicked.connect(self.userList)
         self.backButton.clicked.connect(self.goBack)
-        self.profile.setText(username[0])
+        self.profile.setText(userName[0])
 
     def addNewUser(self):
         check.append("1")                                           # lets program know admin is trying to add user
@@ -426,7 +424,7 @@ class adminMngmnt(QDialog):
         loadUi("adminMngmnt.ui", self)
         self.label.setText("Users in System")
         self.backButton.clicked.connect(self.goBack)
-        self.profile.setText(username[0])
+        self.profile.setText(userName[0])
 
         users = database.child("General Users").get().val()
 
@@ -462,7 +460,7 @@ class difficultySelect(QDialog):
         self.easy.clicked.connect(self.setEasy)
         self.medium.clicked.connect(self.setMed)
         self.hard.clicked.connect(self.setHard)
-        self.profile.setText(username[0])
+        self.profile.setText(userName[0])
         self.backButton.clicked.connect(self.goBack)
     
     # each difficulty saves the type and then goes to the story display for the stories
@@ -492,7 +490,7 @@ class userStats(QDialog):
     def __init__(self):
         super(userStats, self).__init__()
         loadUi("userStats.ui", self)
-        self.profile.setText(username[0])
+        self.profile.setText(userName[0])
         self.accuracyDisplay.setText("Reading Accuracy:\n" + str(database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).get().val()['accuracy']) + "%")
         self.speedDisplay.setText("Reading Speed:\n" + str(database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).get().val()['duration']) + "wpm")
         self.backButton.clicked.connect(self.goBack)
@@ -518,7 +516,7 @@ class storyDisplay(QDialog):
         for title in titles:                                                                  # add every story to list on display
             self.list.addItem(title)
         self.difficulty.setText(diff[0])
-        self.profile.setText(username[0])
+        self.profile.setText(userName[0])
         self.list.itemClicked.connect(self.storyOne)
         self.backButton.clicked.connect(self.goBack)
 
@@ -558,7 +556,7 @@ class readStory(QDialog):
         self.skipButton.clicked.connect(self.skip)
         self.playIPA.clicked.connect(self.say)
         self.statistics_signal.connect(self.finishStory)
-        self.profile.setText(username[0])
+        self.profile.setText(userName[0])
         self.warn.setText("")
         self.instructions.setText("Please read the following line:")
         self.skipButton.setVisible(False)
@@ -665,11 +663,11 @@ class readStory(QDialog):
             print(f"statistics: {accuracy:.2f} {speed:.2f}")
             # TODO@cnTalon #2 : pull old statistics and update statistics in user's row in database
             # perform calculation
-            totalWrong = database.child("General User").child(email.replace(".", "%20")).get().val()['wrong words'] + len(self.total_incorrect_words)
-            database.child("General User").child(email.replace(".", "%20")).update({'wrong words' : totalWrong})  # update with new total
-            totalWords = database.child("General User").child(email.replace(".", "%20")).get().val()['total words'] + len(self.total_words)
-            database.child("General User").child(email.replace(".", "%20")).update({'total words' : totalWords})  # update with new total words
-            database.child("General User").child(email.replace(".", "%20")).update({'accuracy' : (totalWords - totalWrong) / totalWords})# updating the database entry accuracy to the current accuracy
+            totalWrong = database.child("General User").child(emailAddy[0].replace(".", "%20")).get().val()['wrong words'] + len(self.total_incorrect_words)
+            database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'wrong words' : totalWrong})  # update with new total
+            totalWords = database.child("General User").child(emailAddy[0].replace(".", "%20")).get().val()['total words'] + len(self.total_words)
+            database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'total words' : totalWords})  # update with new total words
+            database.child("General User").child(emailAddy[0]).replace(".", "%20").update({'accuracy' : (totalWords - totalWrong) / totalWords})# updating the database entry accuracy to the current accuracy
             
             # TODO@b1gRedDoor #4 : calculate new values for statistics
             
