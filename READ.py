@@ -1,4 +1,5 @@
 import sys, firebase_admin
+from firebase_admin import credentials, auth
 from espeakng import Speaker
 from audio_recorder import AudioRecorder
 from story import Story
