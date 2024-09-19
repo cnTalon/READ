@@ -420,10 +420,6 @@ class adminUsers(QDialog):
         list = adminMngmnt()
         widget.addWidget(list)
         widget.setCurrentIndex(widget.currentIndex() + 1)
-
-    def checkUserStats(self):
-        beep = boop
-        # TODO@cnTalon #19 beep boop
     
     def goBack(self):
         widget.removeWidget(self)
