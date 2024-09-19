@@ -518,7 +518,7 @@ class readStory(QDialog):
         self.recorder = AudioRecorder()
         self.recorder.start()
         loadUi("readStory.ui", self)
-        contents = database.child("Story Bank").child(title[0]).get().val()['Contents']       # grab story contents from database
+        contents = database.child("Story Bank").child(title[0]).get().val()['contents']       # grab story contents from database
         self.story = Story(contents)
         self.lines = self.story.split_into_sentences()                                             # stores stories line by line
         self.incorrect_words = []
@@ -531,6 +531,7 @@ class readStory(QDialog):
         self.storyText.setText(self.lines[0])
         self.recordButton.clicked.connect(self.record)
         self.backButton.clicked.connect(self.goBack)
+        self.skipButton.clicked.connect(self.skip)
         self.statistics_signal.connect(self.finishStory)
         self.profile.setText(username[0])
         self.warn.setText("")
@@ -551,7 +552,7 @@ class readStory(QDialog):
         # TODO@b1gRedDoor #5 : give user feedback that it will take a while
         
         if not self.incorrect_words: # incorrect words is empty
-            sentence = self.lines[0]
+            sentence = self.lines.pop(0)
         else:
             sentence = self.incorrect_words[0]
         
@@ -575,7 +576,6 @@ class readStory(QDialog):
                 print(self.incorrect_words)
                 self.total_words += len(match_list)
                 self.total_incorrect_words += len(self.incorrect_words)
-                self.lines.pop(0)
                 if self.incorrect_words: # words mispronounced
                     self.storyText.setText(self.incorrect_words[0])
                     # TODO@b1gRedDoor #13 show pronunciation of incorrect word
@@ -623,6 +623,15 @@ class readStory(QDialog):
     # if more incorrect words, display next
     # if more sentences, display next
     # else call finishStory method
+    def skip(self):
+        self.skipButton.clicked.disconnect()
+        self.incorrect_words.pop(0)
+        if self.incorrect_words:
+            self.storyText.setText(self.incorrect_words[0])
+        else:
+            self.storyText.setText(self.lines[0])
+            self.skipButton.hide()
+        self.skipButton.clicked.connect(self.skip)
 
     # TODO@cnTalon #1 : make method finishStory() that go to story feedback and somehow pass statistics to the window so it can be displayed
     def finishStory(self,accuracy,speed):
