@@ -389,13 +389,15 @@ class adminUsers(QDialog):
                 msg.setIcon(QMessageBox.Information)
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.exec_()
-        else:
+        elif len(email) == 0:
             msg = QMessageBox()
             msg.setWindowTitle("Error")
             msg.setText("Please enter an email.")
             msg.setIcon(QMessageBox.Information)
             msg.setStandardButtons(QMessageBox.Ok)
             msg.exec_()
+        else:
+            pass
 
 
     def userList(self):
