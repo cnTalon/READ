@@ -17,9 +17,6 @@ from IPAmatching import IPAmatching
 # bg colour rgb(255, 183, 119)
 
 # todo list
-# fix adminHome
-# fix admin
-# add a db entry to save stats for user
 
 # link this project to the database for authentication and database
 firebaseConfig = {
@@ -34,12 +31,12 @@ firebaseConfig = {
     'databaseURL' : "https://read-cd3f3-default-rtdb.europe-west1.firebasedatabase.app/",
 }
 
-cred = credentials.Certificate("C:/Users/Admin/OneDrive - University of Cape Town/3rd Year/CSC3003S/Capstone/Code/READ/read-cd3f3-firebase-adminsdk-j2yp1-8540b31c72.json")
+cred = credentials.Certificate("read-cd3f3-firebase-adminsdk-j2yp1-8540b31c72.json")
 firebase_admin.initialize_app(cred)
 
 firebase = pyrebase.initialize_app(firebaseConfig)      # initialise
 database = firebase.database()                          # set up database
-authenticate = firebase.auth()                                  # setup user authentication
+authenticate = firebase.auth()                          # setup user authentication
 diff = []                                               # difficulty level
 mail = []                                               # name of email
 emailAddy = []                                          # email address
@@ -411,7 +408,6 @@ class adminUsers(QDialog):
         else:
             pass
 
-
     def userList(self):
         list = adminMngmnt()
         widget.addWidget(list)
@@ -430,16 +426,28 @@ class adminMngmnt(QDialog):
         loadUi("adminMngmnt.ui", self)
         self.label.setText("Users in System")
         self.backButton.clicked.connect(self.goBack)
+        self.profile.setText(username[0])
 
         users = database.child("General Users").get().val()
 
         if users:
-            # Iterate over users and add them to the QListWidget
             for username, userData in users.items():
                 first = userData.get('first name')
                 last = userData.get('last name')
                 email = userData.get('email')
-                self.list.addItem(f"Full Name: {first} {last} | Email: {email}")
+                duration = userData.get('duration')
+                total_words = userData.get('total words')
+
+                if total_words == 0:
+                    accuracy = 0
+                else:
+                    accuracy = (total_words - userData.get('wrong words')) / total_words
+                if duration == 0:
+                    speed = 0
+                else:
+                    speed = total_words / duration * 60
+                    
+                self.list.addItem(f"Full Name: {first} {last} | Email: {email} | Speed: {speed:.2f}wpm | Accuracy: {accuracy:.2f}%")
         else:
             self.list.addItem("No users found.")
 
