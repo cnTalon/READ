@@ -126,6 +126,7 @@ class CreateAccScreen(QDialog):
         self.passwordField.setEchoMode(QtWidgets.QLineEdit.Password)
         self.confirmpasswordfield.setEchoMode(QtWidgets.QLineEdit.Password)
         self.signup.clicked.connect(self.createAcc)
+        self.backButton.clicked.connect(self.goBack)
 
     def createAcc(self):
         # extracts the text from the fields
@@ -157,6 +158,9 @@ class CreateAccScreen(QDialog):
                 profile = FillProfileScreen()
                 widget.addWidget(profile)
                 widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def goBack(self):
+        widget.removeWidget(self)
 
 class FillProfileScreen(QDialog):
     # add details to profile (username, first name, last name, date of birth, user type)
@@ -290,6 +294,7 @@ class adminHome(QDialog):
         self.userMngmnt.clicked.connect(self.manageUsers)
         self.uploadStoryButton.clicked.connect(self.uploadStoryPage)
         self.logOut.clicked.connect(self.logOutAdmin)
+        self.profile.setText(username[0])
         # insert selection code
 
     def uploadStoryPage(self):
@@ -324,6 +329,7 @@ class adminUpload(QDialog):
         self.contentField.setWordWrapMode(True)
         self.contentField.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.warn.setVisible(False)
+        self.profile.setText(username[0])
 
     def uploadStory(self):
         title = self.titleField.text()
@@ -359,6 +365,7 @@ class adminUsers(QDialog):
         self.removeUser.clicked.connect(self.removeAUser)
         self.viewUsers.clicked.connect(self.userList)
         self.backButton.clicked.connect(self.goBack)
+        self.profile.setText(username[0])
 
     def addNewUser(self):
         check.append("1")                                           # lets program know admin is trying to add user
@@ -390,7 +397,7 @@ class adminUsers(QDialog):
                 msg.setIcon(QMessageBox.Information)
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.exec_()
-        elif len(email) == 0:
+        elif len(email) == 0 and ok:
             msg = QMessageBox()
             msg.setWindowTitle("Error")
             msg.setText("Please enter an email.")
@@ -408,6 +415,7 @@ class adminUsers(QDialog):
 
     def checkUserStats(self):
         beep = boop
+        # TODO@cnTalon #19 beep boop
     
     def goBack(self):
         widget.removeWidget(self)
@@ -418,6 +426,7 @@ class adminMngmnt(QDialog):
         loadUi("adminMngmnt.ui", self)
         self.label.setText("Users in System")
         self.backButton.clicked.connect(self.goBack)
+        self.profile.setText(username[0])
 
         users = database.child("General Users").get().val()
 
