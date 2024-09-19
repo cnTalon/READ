@@ -429,23 +429,40 @@ class adminMngmnt(QDialog):
         users = database.child("General Users").get().val()
 
         if users:
+            sumDuration, sumWords, sumWrong = 0, 0, 0
             for username, userData in users.items():
                 first = userData.get('first name')
                 last = userData.get('last name')
                 email = userData.get('email')
                 duration = userData.get('duration')
-                total_words = userData.get('total words')
+                totalWords = userData.get('total words')
+                totalWrong  = userData.get('wrong words')
+                sumDuration += duration
+                sumWords += totalWords
+                sumWrong += totalWrong
 
-                if total_words == 0:
+                if totalWords == 0:
                     accuracy = 0
                 else:
-                    accuracy = (total_words - userData.get('wrong words')) / total_words
+                    accuracy = (totalWords - totalWrong) / totalWords
                 if duration == 0:
                     speed = 0
                 else:
-                    speed = total_words / duration * 60
-                    
-                self.list.addItem(f"Full Name: {first} {last} | Email: {email} | Speed: {speed:.2f}wpm | Accuracy: {accuracy:.2f}%")
+                    speed = totalWords / duration * 60
+                self.list.addItem(f"Full Name: {first} {last} | Email: {email} | Speed: {speed:.0f}wpm | Accuracy: {accuracy:.0%}")
+            userCount = len(users)
+            sumWords /= userCount
+            sumWrong /= userCount
+            sumDuration /= userCount
+            if sumWords == 0:
+                avgAcc = 0
+            else:
+                avgAcc = ((sumWords - sumWrong) / sumWords)
+            if sumDuration == 0:
+                avgSpeed = 0
+            else:
+                avgSpeed = sumWords / sumDuration * 60
+            self.aggregate.setText(f"Aggregate Speed: {avgSpeed:.0f}wpm | Aggregate Accuracy: {avgAcc:.0%}")
         else:
             self.list.addItem("No users found.")
 
