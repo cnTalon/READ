@@ -14,10 +14,6 @@ from collections import OrderedDict
 from wav2vec import wav2vec
 from IPAmatching import IPAmatching
 
-# bg colour rgb(255, 183, 119)
-
-# todo list
-
 # link this project to the database for authentication and database
 firebaseConfig = {
     'apiKey' : "AIzaSyCjtWMuOcd3_DlltUN9CQT8cOCCZoKFpKA",
@@ -54,12 +50,12 @@ class WelcomeScreen(QDialog):
         self.login.clicked.connect(self.gotologin)
         self.create.clicked.connect(self.gotocreate)
 
-    def gotologin(self):
+    def gotologin(self):                                    # once selected user goes to the login page
         login = LoginScreen()
         widget.addWidget(login)
         widget.setCurrentIndex(widget.currentIndex()+1)
 
-    def gotocreate(self):
+    def gotocreate(self):                                   # once selected user goes to create a new account
         create = CreateAccScreen()
         widget.addWidget(create)
         widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -75,26 +71,29 @@ class LoginScreen(QDialog):
         self.login.clicked.connect(self.loginfunction)
         self.backButton.clicked.connect(self.goBack)
 
-    def loginfunction(self):
+    def loginfunction(self):                                    # checks if the user exists in the database and logs them in or denies them
         email = self.emailField.text()
         password = self.passwordField.text()
 
-        if len(email)==0 or len(password)==0:
+        if len(email)==0 or len(password)==0:                   # ensures there are no empty lines
             self.errorMsg.setVisible(True)
             self.errorMsg.setText("Please input all fields.")
 
         else:
             check = database.child("Admins").child(email.replace(".", "%20").replace("@", "%40")).get().val()          # looks through Admins category in db and finds the entry
-            if check:
+            check2 = database.child("Teachers").child(email.replace(".", "%20").replace("@", "%40")).get().val()       # looks through the teachers category
+            if check or check2:                                                                   # makes sure the user being queried exists
                 try:
-                    authenticate.sign_in_with_email_and_password(email, password)
-                    userName.append(check['username'])                                            # store username for other windows
-                    admin = adminHome()
-                    widget.addWidget(admin)
+                    authenticate.sign_in_with_email_and_password(email, password)                 # logs user in
+                    userName.append(check['username'])                                            # store username for other window
+                    userName.append(check2['username'])
+                    emailAddy.append(email)                                                       # store email address for other windows
+                    admin = adminHome() 
+                    widget.addWidget(admin)                                                       # goes to next widget
                     widget.setCurrentIndex(widget.currentIndex() + 1)
                 except:
                     self.errorMsg.setVisible(True)
-                    self.errorMsg.setText("Invalid password!")
+                    self.errorMsg.setText("Incorrect password!")                                  # warns user of incorrect password
             else:
                 name = database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).get().val()       # grab username from database
                 if name:
@@ -107,13 +106,12 @@ class LoginScreen(QDialog):
                         widget.setCurrentIndex(widget.currentIndex() + 1)
                     except:
                         self.errorMsg.setVisible(True)
-                        self.errorMsg.setText("Invalid password!")
+                        self.errorMsg.setText("Incorrect password!")
                 else:
                     self.errorMsg.setVisible(True)
-                    self.errorMsg.setText("Invalid username!")
+                    self.errorMsg.setText("Invalid email!")
                 
-
-    def goBack(self):
+    def goBack(self):                   # goes to previous window
         widget.removeWidget(self)
         self.deleteLater()
 
@@ -135,26 +133,28 @@ class CreateAccScreen(QDialog):
         password = self.passwordField.text()
         confirmpassword = self.confirmpasswordfield.text()
 
-        # error checking
-        if len(email) == 0 or len(password) == 0 or len(confirmpassword) == 0:
+        if len(email) == 0 or len(password) == 0 or len(confirmpassword) == 0:          # ensures no fields are empty
             self.errorMsg.setText("Please fill in all inputs.")
 
         elif password != confirmpassword:
             self.errorMsg.setText("Passwords do not match.")
         else:
+            # use for existance of user being queried
             checkGen = database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).get().val()       
-            checkAdmin = database.child("Admins").child(email.replace(".", "%20").replace("@", "%40")).get().val()            
-            if (checkGen and checkGen['email'] == email) or (checkAdmin and checkAdmin['email'] == email):              # check if emails are in database, if they are do they match the one being used
+            checkAdmin = database.child("Admins").child(email.replace(".", "%20").replace("@", "%40")).get().val()
+            checkTeacher = database.child("Teachers").child(email.replace(".", "%20").replace("@", "%40")).get().val()           
+            # checks if email already exists
+            if (checkGen and checkGen['email'] == email) or (checkAdmin and checkAdmin['email'] == email) or (checkTeacher and checkTeacher['email'] == email):              # check if emails are in database, if they are do they match the one being used
                 self.errorMsg.setText("Email already in use!")
             else:
                 try:
-                    authenticate.create_user_with_email_and_password(email, password)
+                    authenticate.create_user_with_email_and_password(email, password)       # create new user
                 except:
-                    if len(password) < 6:
+                    if len(password) < 6:                                                   # minimum password length
                         self.errorMsg.setText("Minimum 6 character password!")
                     else:
-                        self.errorMsg.setText("Email already in use!")
-                emailAddy.append(email)                                                                             # email address for later use (also for db storage)
+                        pass
+                emailAddy.append(email)                                                     # email address for later use (also for db storage)
                 profile = FillProfileScreen()
                 widget.addWidget(profile)
                 widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -172,7 +172,7 @@ class FillProfileScreen(QDialog):
         self.emailLabel.setVisible(False)
         self.emailField.setVisible(False)
 
-        if len(check) > 0:
+        if len(check) > 0:                          # checks if querier is an admin or teacher
             self.emailLabel.setVisible(True)
             self.emailField.setVisible(True)
         else:
@@ -187,7 +187,7 @@ class FillProfileScreen(QDialog):
         job = self.occupation.currentText()
         if len(check) == 0:
             pass
-        else:
+        else:                                   # if querier is Admin/Teacher then add an email field to be filled
             email = self.emailField.text()
             emailAddy.append(email)
 
@@ -198,18 +198,18 @@ class FillProfileScreen(QDialog):
                 "occupation" : job,
                 "DOB" : birth,
                 "email" : emailAddy[0],
-                "accuracy" : 0.0,
                 "duration" : 0.0,
                 "total words" : 0,
                 "wrong words" : 0,
             }
 
-        if job == "Teacher":
+        if job == "Teacher":            # if user is a teacher, take them to teacher verification
+            userName.append(user)
             database.child("Teachers").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).set(data)
             verification = confirmID()
             widget.addWidget(verification)
             widget.setCurrentIndex(widget.currentIndex() + 1)
-        else:
+        else:                           # otherwise they are either admins/general users
             userName.append(user)
             if job != "General User":
                 database.child("Admins").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).set(data)             # sends user inputted data to db
@@ -218,7 +218,7 @@ class FillProfileScreen(QDialog):
                 widget.setCurrentIndex(widget.currentIndex() + 1)
             else:
                 database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).set(data)      # sends the user inputted data to the database for later use
-                if len(check) == 0:                                             # checks if user was added by admin or self
+                if len(check) == 0:                                           # checks if user was added by admin or self
                     home = homeScreen()
                     widget.addWidget(home)
                     widget.setCurrentIndex(widget.currentIndex() + 1)
@@ -272,6 +272,7 @@ class homeScreen(QDialog):
         widget.addWidget(statistics)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
+    # logs user out, deletes all session data
     def logOutUser(self):
         self.clearStack()
         mail.clear()
@@ -287,9 +288,8 @@ class homeScreen(QDialog):
             widget.removeWidget(wdgt)
             wdgt.deleteLater()
 
-# used for teachers and admins
 class adminHome(QDialog):
-    # displays the home page but with admin view
+    # displays the home page but with admin view for Admins and Teachers
     def __init__(self):
         super(adminHome, self).__init__()
         loadUi("adminHome.ui", self)
@@ -297,19 +297,18 @@ class adminHome(QDialog):
         self.uploadStoryButton.clicked.connect(self.uploadStoryPage)
         self.logOut.clicked.connect(self.logOutAdmin)
         self.profile.setText(userName[0])
-        # insert selection code
 
-    def uploadStoryPage(self):
+    def uploadStoryPage(self):      # takes admin to upload a story page
         upload = adminUpload()
         widget.addWidget(upload)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
-    def manageUsers(self):
+    def manageUsers(self):          # takes admin to user management
         manage = adminUsers()
         widget.addWidget(manage)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
-    def logOutAdmin(self):
+    def logOutAdmin(self):          # log out Admin and clear session data
         self.clearStack()
         mail.clear()
         emailAddy.clear()
@@ -325,6 +324,7 @@ class adminHome(QDialog):
             wdgt.deleteLater()
 
 class adminUpload(QDialog):
+    # upload stories as admin
     def __init__(self):
         super(adminUpload, self).__init__()
         loadUi("adminUpload.ui", self)
@@ -336,9 +336,11 @@ class adminUpload(QDialog):
         self.profile.setText(userName[0])
 
     def uploadStory(self):
+        # prompt admin to add story title and content details
         title = self.titleField.text()
         content = self.contentField.toPlainText()
 
+        # ensures content and titles cannot be blank
         if len(content) == 0:
             self.warn.setText("Content cannot be blank.")
             self.warn.setVisible(True)
@@ -350,19 +352,27 @@ class adminUpload(QDialog):
                 'title' : title,
                 'contents' : content,
             }
-            database.child("Story Bank").child(title).set(data)
-            msg = QMessageBox()
-            msg.setWindowTitle("Story Upload")
-            msg.setText("This is to let you know your story has been uploaded.")
-            msg.setIcon(QMessageBox.Information)
-            msg.setStandardButtons(QMessageBox.Ok)
-            msg.exec_()
+            database.child("Story Bank").child(title).set(data)                     # stores story into database
+            msg = QMessageBox()                                                     # notify admin of (un)successful upload
+            if database.child("Story Bank").child(title).set(data).get().val():
+                msg.setWindowTitle("Story Upload")
+                msg.setText("Story uploaded successfully.")
+                msg.setIcon(QMessageBox.Information)
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.exec_()
+            else:
+                msg.setWindowTitle("Story Upload")
+                msg.setText("Story unable to upload.")
+                msg.setIcon(QMessageBox.Information)
+                msg.setStandardButtons(QMessageBox.Ok)
+                msg.exec_()
 
     def goBack(self):
         widget.removeWidget(self)
         self.deleteLater()
 
 class adminUsers(QDialog):
+    # allows admins to manage users by adding, removing and viewing
     def __init__(self):
         super(adminUsers, self).__init__()
         loadUi("adminUsers.ui", self)
@@ -383,7 +393,7 @@ class adminUsers(QDialog):
         if email and ok:
             if database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).get().val() is not None:
                 database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).remove()       # search user in database and remove
-                # TODO delete from firebase authentication as well
+                # delete user from authentication system as well
                 try:
                     user_record = auth.get_user_by_email(email)
                     auth.delete_user(user_record.uid)
@@ -402,7 +412,7 @@ class adminUsers(QDialog):
                 msg.setIcon(QMessageBox.Information)
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.exec_()
-        elif len(email) == 0 and ok:
+        elif len(email) == 0 and ok:                # warns admin that email has to be entered in order to delete a user
             msg = QMessageBox()
             msg.setWindowTitle("Error")
             msg.setText("Please enter an email.")
@@ -411,7 +421,8 @@ class adminUsers(QDialog):
             msg.exec_()
         else:
             pass
-
+    
+    # displays all the users
     def userList(self):
         list = adminMngmnt()
         widget.addWidget(list)
@@ -422,6 +433,7 @@ class adminUsers(QDialog):
         self.deleteLater()
 
 class adminMngmnt(QDialog):
+    # shows the user list with user statistics and aggregated stats
     def __init__(self):
         super(adminMngmnt, self).__init__()
         loadUi("adminMngmnt.ui", self)
@@ -431,9 +443,11 @@ class adminMngmnt(QDialog):
 
         users = database.child("General Users").get().val()
 
+        # goes through all the users in the database
         if users:
             sumDuration, sumWords, sumWrong = 0, 0, 0
             for username, userData in users.items():
+                # gets user statistics
                 first = userData.get('first name')
                 last = userData.get('last name')
                 email = userData.get('email')
@@ -451,8 +465,8 @@ class adminMngmnt(QDialog):
                 if duration == 0:
                     speed = 0
                 else:
-                    speed = totalWords / duration * 60
-                self.list.addItem(f"Full Name: {first} {last} | Email: {email} | Speed: {speed:.0f}wpm | Accuracy: {accuracy:.0%}")
+                    speed = (totalWords - totalWrong) / duration * 60       # speed = correct words per minute
+                self.list.addItem(f"Full Name: {first} {last} | Email: {email} | Speed: {speed:.0f}wpm | Accuracy: {accuracy:.0%} | Total Words Read: {totalWords}")
             userCount = len(users)
             sumWords /= userCount
             sumWrong /= userCount
@@ -464,7 +478,7 @@ class adminMngmnt(QDialog):
             if sumDuration == 0:
                 avgSpeed = 0
             else:
-                avgSpeed = sumWords / sumDuration * 60
+                avgSpeed = (sumWords - sumWrong) / sumDuration * 60
             self.aggregate.setText(f"Aggregate Speed: {avgSpeed:.0f}wpm | Aggregate Accuracy: {avgAcc:.0%}")
         else:
             self.list.addItem("No users found.")
@@ -514,15 +528,18 @@ class userStats(QDialog):
         loadUi("userStats.ui", self)
         self.profile.setText(userName[0])
         duration = database.child('General Users').child(emailAddy[0].replace('.', '%20').replace('@', '%40')).get().val()['duration']
-        total_words = database.child('General Users').child(emailAddy[0].replace('.', '%20').replace('@', '%40')).get().val()['total words']
-        self.accuracyDisplay.setText(f"Reading Accuracy:\n{database.child('General Users').child(emailAddy[0].replace('.', '%20').replace('@', '%40')).get().val()['accuracy']:.0%}")
-        if duration == 0: self.speedDisplay.setText(f"Reading Speed:\n0 wpm")
-        else: self.speedDisplay.setText(f"Reading Speed:\n{total_words/duration*60:.0f} wpm")
+        totalWords = database.child('General Users').child(emailAddy[0].replace('.', '%20').replace('@', '%40')).get().val()['total words']
+        totalWrong = database.child('General Users').child(emailAddy[0].replace('.', '%20').replace('@', '%40')).get().val()['wrong words']
+        self.accuracyDisplay.setText(f"Reading Accuracy:\n{(totalWords - totalWrong) / totalWords:.0%}")
+        if duration == 0: 
+            self.speedDisplay.setText(f"Reading Speed:\n0 wpm")
+        else: 
+            self.speedDisplay.setText(f"Reading Speed:\n{totalWords/duration*60:.0f} wpm")
         self.backButton.clicked.connect(self.goBack)
         self.resetButton.clicked.connect(self.reset)
     
+    # reset user statistics to 0
     def reset(self):
-        database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'accuracy' : 0})
         database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'total words' : 0})
         database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'wrong words' : 0})
         database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'duration' : 0})
@@ -538,7 +555,7 @@ class storyDisplay(QDialog):
     def __init__(self):
         super(storyDisplay, self).__init__()
         loadUi("storydisplay.ui", self)
-        self.stories = database.child("Story Bank").get().val()                               # grab username from database
+        self.stories = database.child("Story Bank").get().val()                               # grab stories from database
         if self.stories:                                                                      # get all the story titles from db
             titles = list(self.stories.keys())
         for title in titles:                                                                  # add every story to list on display
@@ -571,7 +588,7 @@ class readStory(QDialog):
         self.recorder = AudioRecorder()
         self.recorder.start()
         loadUi("readStory.ui", self)
-        contents = database.child("Story Bank").child(title[0]).get().val()['contents']       # grab story contents from database
+        contents = database.child("Story Bank").child(title[0]).get().val()['contents']            # grab story contents from database
         self.story = Story(contents)
         self.lines = self.story.split_into_sentences()                                             # stores stories line by line
         self.incorrect_words = []
@@ -605,30 +622,25 @@ class readStory(QDialog):
         self.warn.setText("ANALYSING, PLEASE WAIT...")
         QApplication.processEvents()
         self.recorder.stop_recording()
-        # TODO@b1gRedDoor #5 : give user feedback that it will take a while
         
         if not self.incorrect_words: # incorrect words is empty
             sentence = self.lines.pop(0)
         else:
             sentence = self.incorrect_words[0]
         
-        print("analysis")
         self.model.load_audio(self.recorder.getFilename())
         self.model.get_values()
         ipa_input = self.model.IPA_transcription
         eng_input = self.model.word_transcription
         ipa_expected = IPAmatching.IPA_correction(IPAmatching.ipa_transcription(sentence))
         match_list = IPAmatching.pronunciation_matching(eng_input[0],ipa_input[0],ipa_expected.split(),sentence)
-        print(match_list)
-        
         
         match self.incorrect_words:
             case []: # read sentence
-                print("sentence was read")
                 # word is a list represented as follows: [word,<speech to text value>,<speech to ipa value>]
                 # as you can see in our code, we only ever user the speech to ipa value to
                 # determine if a word is correct or incorrect
-                for word in match_list: # FIXME@b1gRedDoor #12 this abomination
+                for word in match_list:
                     if word[2] == '0': # word was pronounced incorrectly
                         print(f"{word[0]} {word[2]}")
                         self.incorrect_words.append(word[0])
@@ -638,16 +650,13 @@ class readStory(QDialog):
                 if self.incorrect_words: # words mispronounced
                     self.storyText.setText(f"{self.incorrect_words[0]}\n\nPronunciation: {IPAmatching.ipa_transcription(self.incorrect_words[0])}")
                     self.playIPA.show()
-                    # TODO@b1gRedDoor #14 play audio for correct pronunciation of word
                 elif self.lines: # words correct and story not finished
-                    print("fetched next line")
                     self.storyText.setText(self.lines[0])
                 else: # words correct and story finished
                     self.recorder.finish_recording()
                     accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
                     speed = (self.total_words - self.total_incorrect_words) / self.model.duration * 60 if self.model.duration != 0 else (self.total_words - self.total_incorrect_words) * 60 # in case for some reason there are words but duration is 0
                     self.statistics_signal.emit(accuracy,speed) # creates next window
-                    print(f"statistics: {accuracy:.2f}% {speed:.2f}wpm")
                     
                     totalWrong = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['wrong words'] + self.total_incorrect_words
                     database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'wrong words' : totalWrong})  # update with new total
@@ -657,24 +666,20 @@ class readStory(QDialog):
                     totalDuration = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['duration'] + self.model.duration
                     database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'duration' : totalDuration}) # update with new total duration
             case _: # read mispronounced word
-                print("mispronounced word read")
                 if match_list[0][2] == '1': # correct pronunciation 
                     self.incorrect_words.pop(0)
                     if self.incorrect_words: # more words to retry
                         self.storyText.setText(f"{self.incorrect_words[0]}\n\nPronunciation: {IPAmatching.ipa_transcription(self.incorrect_words[0])}")
-                        # TODO@b1gRedDoor #14 play audio
                     else: # mispronounced words finished
                         self.playIPA.hide()
                         self.skipButton.hide() # prevent the user from skipping after all incorrect words are finished
                         self.storyText.setText(self.lines[0])
                 else: # mispronounced again
-                    print("mispronounced word read")
                     self.skipButton.show() # allow the user to skip
 
         self.warn.hide()
         self.recordButton.clicked.connect(self.record)
         
-    # TODO@b1gRedDoor #11 skipButton
     # if more incorrect words, display next
     # if more sentences, display next
     # else call finishStory method
@@ -695,8 +700,6 @@ class readStory(QDialog):
             accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
             speed = (self.total_words - self.total_incorrect_words) / self.model.duration * 60 if self.model.duration != 0 else (self.total_words - self.total_incorrect_words) * 60 # in case for some reason there are words but duration is 0
             self.statistics_signal.emit(accuracy,speed) # creates next window
-            print(f"statistics: {accuracy:.0%} {speed:.0f}wpm")
-            
             
             totalWrong = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['wrong words'] + self.total_incorrect_words
             database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'wrong words' : totalWrong})  # update with new total
@@ -704,8 +707,7 @@ class readStory(QDialog):
             database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'total words' : totalWords})  # update with new total words
             database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'accuracy' : (totalWords - totalWrong) / totalWords})# updating the database entry accuracy to the current accuracy
             totalDuration = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['duration'] + self.model.duration
-            database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'duration' : totalDuration}) # update with new total duration
-            
+            database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'duration' : totalDuration}) # update with new total duration    
         self.skipButton.clicked.connect(self.skip)
     
     def say(self):
@@ -714,7 +716,7 @@ class readStory(QDialog):
         self.recordButton.clicked.connect(self.record)
         self.voice_output.say(self.incorrect_words[0])
 
-    # TODO@cnTalon #1 : make method finishStory() that go to story feedback and somehow pass statistics to the window so it can be displayed
+    # once story is completely read, go to story feedback
     def finishStory(self,accuracy,speed):
         feedback = storyFeedback(accuracy,speed)
         widget.addWidget(feedback)
@@ -739,7 +741,6 @@ class storyFeedback(QDialog):
         self.stats.setText(f"Well Done!\n\nAccuracy: {accuracy:.0%}\nSpeed: {speed:.0f} words per minute")
     
     def goHome(self):
-        print("going home")
         i = widget.count() - 5
         while i < widget.count() - 1:
             current_widget = widget.currentWidget()
