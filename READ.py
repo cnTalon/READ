@@ -125,6 +125,7 @@ class CreateAccScreen(QDialog):
         self.passwordField.setEchoMode(QtWidgets.QLineEdit.Password)
         self.confirmpasswordfield.setEchoMode(QtWidgets.QLineEdit.Password)
         self.signup.clicked.connect(self.createAcc)
+        self.backButton.clicked.connect(self.goBack)
 
     def createAcc(self):
         # extracts the text from the fields
@@ -156,6 +157,9 @@ class CreateAccScreen(QDialog):
                 profile = FillProfileScreen()
                 widget.addWidget(profile)
                 widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    def goBack(self):
+        widget.removeWidget(self)
 
 class FillProfileScreen(QDialog):
     # add details to profile (username, first name, last name, date of birth, user type)
@@ -389,7 +393,7 @@ class adminUsers(QDialog):
                 msg.setIcon(QMessageBox.Information)
                 msg.setStandardButtons(QMessageBox.Ok)
                 msg.exec_()
-        elif len(email) == 0:
+        elif len(email) == 0 and ok:
             msg = QMessageBox()
             msg.setWindowTitle("Error")
             msg.setText("Please enter an email.")
@@ -580,7 +584,7 @@ class readStory(QDialog):
                 self.total_incorrect_words += len(self.incorrect_words)
                 if self.incorrect_words: # words mispronounced
                     self.storyText.setText(self.incorrect_words[0])
-                    self.ipaText.setText(IPAmatching.ipa_transcription(self.incorrect_words[0]))
+                    # TODO@b1gRedDoor #13 show pronunciation of incorrect word
                     # TODO@b1gRedDoor #14 play audio for correct pronunciation of word
                 elif self.lines: # words correct and story not finished
                     print("fetched next line")
@@ -607,11 +611,11 @@ class readStory(QDialog):
                 if match_list[0][2] == '1': # correct pronunciation
                     self.incorrect_words.pop(0)
                     if self.incorrect_words: # more words to retry
-                        self.storyText.setText(self.incorrect_words[0])
-                        self.ipaText.setText(IPAmatching.ipa_transcription(self.incorrect_words[0]))
+                        self.storyText.setText(self.incorrect_words[0]) 
+                        # TODO@b1gRedDoor #13 show correct pronunciation
                         # TODO@b1gRedDoor #14 play audio
                     else: # mispronounced words finished
-                        self.ipaText.hide()
+                        # TODO@b1gRedDoor #13 hide pronunciation
                         self.skipButton.hide() # prevent the user from skipping after all incorrect words are finished
                         self.storyText.setText(self.lines[0])
                 else: # mispronounced again
@@ -630,9 +634,7 @@ class readStory(QDialog):
         self.incorrect_words.pop(0)
         if self.incorrect_words:
             self.storyText.setText(self.incorrect_words[0])
-            self.ipaText.setText(IPAmatching.ipa_transcription(self.incorrect_words[0]))
         else:
-            self.ipaText.hide()
             self.storyText.setText(self.lines[0])
             self.skipButton.hide()
         self.skipButton.clicked.connect(self.skip)
