@@ -1,4 +1,5 @@
-import sys
+import sys, firebase_admin
+from firebase_admin import credentials, auth
 from espeakng import Speaker
 from audio_recorder import AudioRecorder
 from story import Story
@@ -32,6 +33,9 @@ firebaseConfig = {
     'measurementId' : "G-0PEX43W7DW",
     'databaseURL' : "https://read-cd3f3-default-rtdb.europe-west1.firebasedatabase.app/",
 }
+
+cred = credentials.Certificate("C:/Users/Admin/OneDrive - University of Cape Town/3rd Year/CSC3003S/Capstone/Code/READ/read-cd3f3-firebase-adminsdk-j2yp1-8540b31c72.json")
+firebase_admin.initialize_app(cred)
 
 firebase = pyrebase.initialize_app(firebaseConfig)      # initialise
 database = firebase.database()                          # set up database
@@ -197,8 +201,8 @@ class FillProfileScreen(QDialog):
                 "occupation" : job,
                 "DOB" : birth,
                 "email" : emailAddy[0],
-                "accuracy" : 0,
-                "speed" : 0,
+                "accuracy" : 0.0,
+                "duration" : 0.0,
                 "total words" : 0,
                 "wrong words" : 0,
             }
@@ -380,7 +384,7 @@ class adminUsers(QDialog):
                 database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).remove()       # search user in database and remove
                 # TODO delete from firebase authentication as well
                 try:
-                    user_record = auth.get_user_by_email(email)
+                    user_record = auth.get_user(email)
                     auth.delete_user(user_record.uid)
                 except Exception as e:
                     print(f"Error deleting user from authentication: {e}")
@@ -426,7 +430,6 @@ class adminMngmnt(QDialog):
         loadUi("adminMngmnt.ui", self)
         self.label.setText("Users in System")
         self.backButton.clicked.connect(self.goBack)
-        self.profile.setText(username[0])
 
         users = database.child("General Users").get().val()
 
@@ -483,7 +486,7 @@ class userStats(QDialog):
         loadUi("userStats.ui", self)
         self.profile.setText(username[0])
         self.accuracyDisplay.setText("Reading Accuracy:\n" + str(database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).get().val()['accuracy']) + "%")
-        self.speedDisplay.setText("Reading Speed:\n" + str(database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).get().val()['speed']) + "wpm")
+        self.speedDisplay.setText("Reading Speed:\n" + str(database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).get().val()['duration']) + "wpm")
         self.backButton.clicked.connect(self.goBack)
         self.resetButton.clicked.connect(self.reset)
     
@@ -491,7 +494,7 @@ class userStats(QDialog):
         database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'accuracy' : 0})
         database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'total words' : 0})
         database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'wrong words' : 0})
-        database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'speed' : 0})
+        database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'duration' : 0})
 
     def goBack(self):
         widget.removeWidget(self)
