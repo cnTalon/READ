@@ -115,7 +115,7 @@ class LoginScreen(QDialog):
 
     def goBack(self):
         widget.removeWidget(self)
-        self.deleteLater(0)
+        self.deleteLater()
 
 class CreateAccScreen(QDialog):
     # user can either input details (username, new password, password again to confirm its correct) to create account
@@ -282,14 +282,10 @@ class homeScreen(QDialog):
         widget.setCurrentIndex(widget.indexOf(welcome))
 
     def clearStack(self):
-        while widget.count() > 0:
+        while widget.count() > 1:
             wdgt = widget.currentWidget()
             widget.removeWidget(wdgt)
             wdgt.deleteLater()
-
-    def goBack(self):
-        widget.removeWidget(self)
-        self.deleteLater()
 
 # used for teachers and admins
 class adminHome(QDialog):
@@ -323,7 +319,7 @@ class adminHome(QDialog):
         widget.setCurrentIndex(widget.indexOf(welcome))
     
     def clearStack(self):
-        while widget.count() > 0:
+        while widget.count() > 1:
             wdgt = widget.currentWidget()
             widget.removeWidget(wdgt)
             wdgt.deleteLater()
