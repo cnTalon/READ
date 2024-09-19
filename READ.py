@@ -39,7 +39,7 @@ firebase_admin.initialize_app(cred)
 
 firebase = pyrebase.initialize_app(firebaseConfig)      # initialise
 database = firebase.database()                          # set up database
-auth = firebase.auth()                                  # setup user authentication
+authenticate = firebase.auth()                                  # setup user authentication
 diff = []                                               # difficulty level
 mail = []                                               # name of email
 emailAddy = []                                          # email address
@@ -90,7 +90,7 @@ class LoginScreen(QDialog):
             check = database.child("Admins").child(email.replace(".", "%20").replace("@", "%40")).get().val()          # looks through Admins category in db and finds the entry
             if check:
                 try:
-                    auth.sign_in_with_email_and_password(email, password)
+                    authenticate.sign_in_with_email_and_password(email, password)
                     username.append(check['username'])                                            # store username for other windows
                     admin = adminHome()
                     widget.addWidget(admin)
@@ -102,7 +102,7 @@ class LoginScreen(QDialog):
                 name = database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).get().val()       # grab username from database
                 if name:
                     try:
-                        auth.sign_in_with_email_and_password(email, password)
+                        authenticate.sign_in_with_email_and_password(email, password)
                         username.append(name['username'])                                                   # store username for other windows
                         emailAddy.append(email)                                                             # store email for other windows
                         home = homeScreen()
@@ -151,7 +151,7 @@ class CreateAccScreen(QDialog):
                 self.errorMsg.setText("Email already in use!")
             else:
                 try:
-                    auth.create_user_with_email_and_password(email, password)
+                    authenticate.create_user_with_email_and_password(email, password)
                 except:
                     if len(password) < 6:
                         self.errorMsg.setText("Minimum 6 character password!")
@@ -226,7 +226,7 @@ class FillProfileScreen(QDialog):
                     widget.addWidget(home)
                     widget.setCurrentIndex(widget.currentIndex() + 1)
                 else:
-                    auth.create_user_with_email_and_password(emailAddy[0], "default")
+                    authenticate.create_user_with_email_and_password(emailAddy[0], "default")
                     check.clear()
                     widget.removeWidget(self)                                 # once user is added by admin the page terminates and the admin is notified that the user was added successfully
 
@@ -384,7 +384,7 @@ class adminUsers(QDialog):
                 database.child("General Users").child(email.replace(".", "%20").replace("@", "%40")).remove()       # search user in database and remove
                 # TODO delete from firebase authentication as well
                 try:
-                    user_record = auth.get_user(email)
+                    user_record = auth.get_user_by_email(email)
                     auth.delete_user(user_record.uid)
                 except Exception as e:
                     print(f"Error deleting user from authentication: {e}")
