@@ -638,6 +638,7 @@ class readStory(QDialog):
                 if self.incorrect_words: # words mispronounced
                     self.storyText.setText(f"{self.incorrect_words[0]}\n\nPronunciation: {IPAmatching.ipa_transcription(self.incorrect_words[0])}")
                     self.playIPA.show()
+                    self.skipButton.show()
                     # TODO@b1gRedDoor #14 play audio for correct pronunciation of word
                 elif self.lines: # words correct and story not finished
                     print("fetched next line")
@@ -669,7 +670,6 @@ class readStory(QDialog):
                         self.storyText.setText(self.lines[0])
                 else: # mispronounced again
                     print("mispronounced word read")
-                    self.skipButton.show() # allow the user to skip
 
         self.warn.hide()
         self.recordButton.clicked.connect(self.record)
