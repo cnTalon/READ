@@ -115,6 +115,7 @@ class LoginScreen(QDialog):
 
     def goBack(self):
         widget.removeWidget(self)
+        self.deleteLater()
 
 class CreateAccScreen(QDialog):
     # user can either input details (username, new password, password again to confirm its correct) to create account
@@ -160,6 +161,7 @@ class CreateAccScreen(QDialog):
 
     def goBack(self):
         widget.removeWidget(self)
+        self.deleteLater()
 
 class FillProfileScreen(QDialog):
     # add details to profile (username, first name, last name, date of birth, user type)
@@ -224,6 +226,7 @@ class FillProfileScreen(QDialog):
                     authenticate.create_user_with_email_and_password(emailAddy[0], "default")
                     check.clear()
                     widget.removeWidget(self)                                 # once user is added by admin the page terminates and the admin is notified that the user was added successfully
+                    self.deleteLater()
 
 class confirmID(QDialog):
     # checks if the teacher is real/in system
@@ -245,6 +248,7 @@ class confirmID(QDialog):
 
     def goBack(self):
         widget.removeWidget(self)
+        self.deleteLater()
 
 class homeScreen(QDialog):
     # shows the home screen of the application with options to read or view stats
@@ -278,11 +282,10 @@ class homeScreen(QDialog):
         widget.setCurrentIndex(widget.indexOf(welcome))
 
     def clearStack(self):
-        while widget.count() > 0:
-            widget.removeWidget(widget.widget(0))
-
-    def goBack(self):
-        widget.removeWidget(self)
+        while widget.count() > 1:
+            wdgt = widget.currentWidget()
+            widget.removeWidget(wdgt)
+            wdgt.deleteLater()
 
 # used for teachers and admins
 class adminHome(QDialog):
@@ -316,8 +319,10 @@ class adminHome(QDialog):
         widget.setCurrentIndex(widget.indexOf(welcome))
     
     def clearStack(self):
-        while widget.count() > 0:
-            widget.removeWidget(widget.widget(0))
+        while widget.count() > 1:
+            wdgt = widget.currentWidget()
+            widget.removeWidget(wdgt)
+            wdgt.deleteLater()
 
 class adminUpload(QDialog):
     def __init__(self):
@@ -355,6 +360,7 @@ class adminUpload(QDialog):
 
     def goBack(self):
         widget.removeWidget(self)
+        self.deleteLater()
 
 class adminUsers(QDialog):
     def __init__(self):
@@ -410,13 +416,10 @@ class adminUsers(QDialog):
         list = adminMngmnt()
         widget.addWidget(list)
         widget.setCurrentIndex(widget.currentIndex() + 1)
-
-    def checkUserStats(self):
-        beep = boop
-        # TODO@cnTalon #19 beep boop
     
     def goBack(self):
         widget.removeWidget(self)
+        self.deleteLater()
 
 class adminMngmnt(QDialog):
     def __init__(self):
@@ -468,6 +471,7 @@ class adminMngmnt(QDialog):
 
     def goBack(self):
         widget.removeWidget(self)
+        self.deleteLater()
 
 class difficultySelect(QDialog):
     # display difficulty options
@@ -501,6 +505,7 @@ class difficultySelect(QDialog):
 
     def goBack(self):
         widget.removeWidget(self)
+        self.deleteLater()
 
 class userStats(QDialog):
     # displays the user overall statistics
@@ -508,8 +513,11 @@ class userStats(QDialog):
         super(userStats, self).__init__()
         loadUi("userStats.ui", self)
         self.profile.setText(userName[0])
-        self.accuracyDisplay.setText("Reading Accuracy:\n" + str(database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).get().val()['accuracy']) + "%")
-        self.speedDisplay.setText("Reading Speed:\n" + str(database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).get().val()['duration']) + "wpm")
+        duration = database.child('General Users').child(emailAddy[0].replace('.', '%20').replace('@', '%40')).get().val()['duration']
+        total_words = database.child('General Users').child(emailAddy[0].replace('.', '%20').replace('@', '%40')).get().val()['total words']
+        self.accuracyDisplay.setText(f"Reading Accuracy:\n{database.child('General Users').child(emailAddy[0].replace('.', '%20').replace('@', '%40')).get().val()['accuracy']:.0%}")
+        if duration == 0: self.speedDisplay.setText(f"Reading Speed:\n0 wpm")
+        else: self.speedDisplay.setText(f"Reading Speed:\n{total_words/duration*60:.0f} wpm")
         self.backButton.clicked.connect(self.goBack)
         self.resetButton.clicked.connect(self.reset)
     
@@ -518,9 +526,12 @@ class userStats(QDialog):
         database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'total words' : 0})
         database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'wrong words' : 0})
         database.child("General Users").child(emailAddy[0].replace(".", "%20").replace("@", "%40")).update({'duration' : 0})
+        self.accuracyDisplay.setText(f"Reading Accuracy:\n0%")
+        self.speedDisplay.setText(f"Reading Speed:\n0 wpm")
 
     def goBack(self):
         widget.removeWidget(self)
+        self.deleteLater()
 
 class storyDisplay(QDialog):
     # displays the stories in the database in a list
@@ -549,6 +560,7 @@ class storyDisplay(QDialog):
     def goBack(self):
         diff.clear()
         widget.removeWidget(self)
+        self.deleteLater()
 
 class readStory(QDialog):
     statistics_signal = pyqtSignal(float,float)
@@ -633,17 +645,17 @@ class readStory(QDialog):
                 else: # words correct and story finished
                     self.recorder.finish_recording()
                     accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
-                    speed = self.total_words / self.model.duration * 60
+                    speed = (self.total_words - self.total_incorrect_words) / self.model.duration * 60 if self.model.duration != 0 else (self.total_words - self.total_incorrect_words) * 60 # in case for some reason there are words but duration is 0
                     self.statistics_signal.emit(accuracy,speed) # creates next window
                     print(f"statistics: {accuracy:.2f}% {speed:.2f}wpm")
                     
-                    totalWrong = database.child("General User").child(emailAddy[0].replace(".", "%20")).get().val()['wrong words'] + len(self.total_incorrect_words)
-                    database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'wrong words' : totalWrong})  # update with new total
-                    totalWords = database.child("General User").child(emailAddy[0].replace(".", "%20")).get().val()['total words'] + len(self.total_words)
-                    database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'total words' : totalWords})  # update with new total words
-                    database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'accuracy' : (totalWords - totalWrong) / totalWords})# updating the database entry accuracy to the current accuracy
-                    totalDuration = database.child("General User").child(emailAddy[0].replace(".", "%20")).get().val()['duration'] + self.model.duration
-                    database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'duration' : totalDuration}) # update with new total duration
+                    totalWrong = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['wrong words'] + self.total_incorrect_words
+                    database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'wrong words' : totalWrong})  # update with new total
+                    totalWords = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['total words'] + self.total_words
+                    database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'total words' : totalWords})  # update with new total words
+                    database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'accuracy' : (totalWords - totalWrong) / totalWords})# updating the database entry accuracy to the current accuracy
+                    totalDuration = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['duration'] + self.model.duration
+                    database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'duration' : totalDuration}) # update with new total duration
             case _: # read mispronounced word
                 print("mispronounced word read")
                 if match_list[0][2] == '1': # correct pronunciation 
@@ -681,18 +693,18 @@ class readStory(QDialog):
         else: # story finished
             self.recorder.finish_recording()
             accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
-            speed = self.total_words / self.model.duration * 60
+            speed = (self.total_words - self.total_incorrect_words) / self.model.duration * 60 if self.model.duration != 0 else (self.total_words - self.total_incorrect_words) * 60 # in case for some reason there are words but duration is 0
             self.statistics_signal.emit(accuracy,speed) # creates next window
             print(f"statistics: {accuracy:.0%} {speed:.0f}wpm")
             
             
-            totalWrong = database.child("General User").child(emailAddy[0].replace(".", "%20")).get().val()['wrong words'] + len(self.total_incorrect_words)
-            database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'wrong words' : totalWrong})  # update with new total
-            totalWords = database.child("General User").child(emailAddy[0].replace(".", "%20")).get().val()['total words'] + len(self.total_words)
-            database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'total words' : totalWords})  # update with new total words
-            database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'accuracy' : (totalWords - totalWrong) / totalWords})# updating the database entry accuracy to the current accuracy
-            totalDuration = database.child("General User").child(emailAddy[0].replace(".", "%20")).get().val()['duration'] + self.model.duration
-            database.child("General User").child(emailAddy[0].replace(".", "%20")).update({'duration' : totalDuration}) # update with new total duration
+            totalWrong = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['wrong words'] + self.total_incorrect_words
+            database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'wrong words' : totalWrong})  # update with new total
+            totalWords = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['total words'] + self.total_words
+            database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'total words' : totalWords})  # update with new total words
+            database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'accuracy' : (totalWords - totalWrong) / totalWords})# updating the database entry accuracy to the current accuracy
+            totalDuration = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['duration'] + self.model.duration
+            database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'duration' : totalDuration}) # update with new total duration
             
         self.skipButton.clicked.connect(self.skip)
     
@@ -712,6 +724,7 @@ class readStory(QDialog):
         self.recorder.finish_recording()
         title.clear()
         widget.removeWidget(self)
+        self.deleteLater()
 
 class storyFeedback(QDialog):
     # gives feedback to user on the read lines
@@ -723,14 +736,15 @@ class storyFeedback(QDialog):
             self.displayFeedback(accuracy,speed)
 
     def displayFeedback(self,accuracy:float,speed:float):
-        self.stats.setText(f"Well Done!\n\nAccuracy: {accuracy * 100:.0%}\nSpeed: {speed:.0f} words per minute")
+        self.stats.setText(f"Well Done!\n\nAccuracy: {accuracy:.0%}\nSpeed: {speed:.0f} words per minute")
     
     def goHome(self):
-        count = widget.count()
-        for i in range(count - 4,count,-1):
-            _ = widget.widget(i)
-            widget.removeWidget(_)
-            _.deleteLater()
+        print("going home")
+        i = widget.count() - 5
+        while i < widget.count() - 1:
+            current_widget = widget.currentWidget()
+            widget.removeWidget(current_widget)
+            current_widget.deleteLater()
 
 # main
 if __name__ == "__main__":
