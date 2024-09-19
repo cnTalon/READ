@@ -653,13 +653,13 @@ class readStory(QDialog):
             self.statistics_signal.emit(accuracy,speed) # creates next window
             print(f"statistics: {accuracy:.2f} {speed:.2f}")
             # TODO@cnTalon #2 : pull old statistics and update statistics in user's row in database
-            # oldAccuracy = database.child("General User").child(email.replace(".", "%20")).get().val()['accuracy'] # gets old accuracy from db
             # perform calculation
-            # totalWrong = database.child("General User").child(email.replace(".", "%20")).get().val()['wrong words'] + len(self.total_incorrect_words)
-            # database.child("General User").child(email.replace(".", "%20")).update({'wrong words' : totalWrong})  # update with new total
-            # totalWords = database.child("General User").child(email.replace(".", "%20")).get().val()['total words'] + len(self.total_words)
-            # database.child("General User").child(email.replace(".", "%20")).update({'total words' : totalWords})  # update with new total words
-            # database.child("General User").child(email.replace(".", "%20")).update({'accuracy' : accuracy})       # updating the database entry accuracy to the current accuracy
+            totalWrong = database.child("General User").child(email.replace(".", "%20")).get().val()['wrong words'] + len(self.total_incorrect_words)
+            database.child("General User").child(email.replace(".", "%20")).update({'wrong words' : totalWrong})  # update with new total
+            totalWords = database.child("General User").child(email.replace(".", "%20")).get().val()['total words'] + len(self.total_words)
+            database.child("General User").child(email.replace(".", "%20")).update({'total words' : totalWords})  # update with new total words
+            database.child("General User").child(email.replace(".", "%20")).update({'accuracy' : (totalWords - totalWrong) / totalWords})# updating the database entry accuracy to the current accuracy
+            
             # TODO@b1gRedDoor #4 : calculate new values for statistics
             
         self.skipButton.clicked.connect(self.skip)
