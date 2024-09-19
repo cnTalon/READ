@@ -28,7 +28,7 @@ class uploader():
     def loadStory(self, title, content):
         data = {
             "Title" : title,
-            "Contents" : content,
+            "contents" : content,
         }
         database.child("Story Bank").child(title).set(data)
 
