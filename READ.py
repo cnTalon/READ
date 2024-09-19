@@ -1,4 +1,5 @@
 import sys
+from espeakng import Speaker
 from audio_recorder import AudioRecorder
 from story import Story
 from PyQt5.QtCore import Qt
@@ -414,6 +415,7 @@ class adminUsers(QDialog):
 
     def checkUserStats(self):
         beep = boop
+        # TODO@cnTalon #19 beep boop
     
     def goBack(self):
         widget.removeWidget(self)
@@ -525,6 +527,7 @@ class readStory(QDialog):
     # shows the story line by line and allows recording of the audio at button presses
     def __init__(self):
         super(readStory, self).__init__()
+        self.voice_output = Speaker(voice="en",pitch=80,wpm=160)
         self.recorder = AudioRecorder()
         self.recorder.start()
         loadUi("readStory.ui", self)
@@ -542,11 +545,13 @@ class readStory(QDialog):
         self.recordButton.clicked.connect(self.record)
         self.backButton.clicked.connect(self.goBack)
         self.skipButton.clicked.connect(self.skip)
+        self.playIPA.clicked.connect(self.say)
         self.statistics_signal.connect(self.finishStory)
         self.profile.setText(username[0])
         self.warn.setText("")
         self.instructions.setText("Please read the following line:")
         self.skipButton.setVisible(False)
+        self.playIPA.setVisible(False)
 
     def record(self):
         self.recordButton.clicked.disconnect()
@@ -557,8 +562,9 @@ class readStory(QDialog):
 
     def stopRecord(self):
         self.recordButton.clicked.disconnect() # stop button from doing anything while processing
-        self.recorder.stop_recording()
         self.warn.setText("ANALYSING, PLEASE WAIT...")
+        QApplication.processEvents()
+        self.recorder.stop_recording()
         # TODO@b1gRedDoor #5 : give user feedback that it will take a while
         
         if not self.incorrect_words: # incorrect words is empty
@@ -587,8 +593,8 @@ class readStory(QDialog):
                 self.total_words += len(match_list)
                 self.total_incorrect_words += len(self.incorrect_words)
                 if self.incorrect_words: # words mispronounced
-                    self.storyText.setText(self.incorrect_words[0])
-                    # TODO@b1gRedDoor #13 show pronunciation of incorrect word
+                    self.storyText.setText(f"{self.incorrect_words[0]}\n\nPronunciation: {IPAmatching.ipa_transcription(self.incorrect_words[0])}")
+                    self.playIPA.show()
                     # TODO@b1gRedDoor #14 play audio for correct pronunciation of word
                 elif self.lines: # words correct and story not finished
                     print("fetched next line")
@@ -608,18 +614,15 @@ class readStory(QDialog):
                     # database.child("General User").child(email.replace(".", "%20")).update({'total words' : totalWords})  # update with new total words
                     # database.child("General User").child(email.replace(".", "%20")).update({'accuracy' : accuracy})       # updating the database entry accuracy to the current accuracy
                     # TODO@b1gRedDoor #4 : calculate new values for statistics
-                # endregion
-                # endregion
             case _: # read mispronounced word
                 print("mispronounced word read")
                 if match_list[0][2] == '1': # correct pronunciation
                     self.incorrect_words.pop(0)
                     if self.incorrect_words: # more words to retry
-                        self.storyText.setText(self.incorrect_words[0]) 
-                        # TODO@b1gRedDoor #13 show correct pronunciation
+                        self.storyText.setText(f"{self.incorrect_words[0]}\n\nPronunciation: {IPAmatching.ipa_transcription(self.incorrect_words[0])}")
                         # TODO@b1gRedDoor #14 play audio
                     else: # mispronounced words finished
-                        # TODO@b1gRedDoor #13 hide pronunciation
+                        self.playIPA.hide()
                         self.skipButton.hide() # prevent the user from skipping after all incorrect words are finished
                         self.storyText.setText(self.lines[0])
                 else: # mispronounced again
@@ -635,13 +638,35 @@ class readStory(QDialog):
     # else call finishStory method
     def skip(self):
         self.skipButton.clicked.disconnect()
+        self.recorder.stop_recording()
         self.incorrect_words.pop(0)
-        if self.incorrect_words:
-            self.storyText.setText(self.incorrect_words[0])
-        else:
-            self.storyText.setText(self.lines[0])
+        if self.incorrect_words: # more mispronounced words left
+            self.storyText.setText(f"{self.incorrect_words[0]}\n\nPronunciation: {IPAmatching.ipa_transcription(self.incorrect_words[0])}")
+        elif self.lines: # no mispronounced words left but story not finished
+            self.playIPA.hide()
             self.skipButton.hide()
+            self.storyText.setText(self.lines[0])
+        else: # story finished
+            self.recorder.finish_recording()
+            accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
+            speed = self.model.duration / len(self.story.split_into_sentences())
+            self.statistics_signal.emit(accuracy,speed) # creates next window
+            print(f"statistics: {accuracy:.2f} {speed:.2f}")
+            # TODO@cnTalon #2 : pull old statistics and update statistics in user's row in database
+            # oldAccuracy = database.child("General User").child(email.replace(".", "%20")).get().val()['accuracy'] # gets old accuracy from db
+            # perform calculation
+            # totalWrong = database.child("General User").child(email.replace(".", "%20")).get().val()['wrong words'] + len(self.total_incorrect_words)
+            # database.child("General User").child(email.replace(".", "%20")).update({'wrong words' : totalWrong})  # update with new total
+            # totalWords = database.child("General User").child(email.replace(".", "%20")).get().val()['total words'] + len(self.total_words)
+            # database.child("General User").child(email.replace(".", "%20")).update({'total words' : totalWords})  # update with new total words
+            # database.child("General User").child(email.replace(".", "%20")).update({'accuracy' : accuracy})       # updating the database entry accuracy to the current accuracy
+            # TODO@b1gRedDoor #4 : calculate new values for statistics
+            
         self.skipButton.clicked.connect(self.skip)
+    
+    def say(self):
+        self.recorder.stop_recording()
+        self.voice_output.say(self.incorrect_words[0])
 
     # TODO@cnTalon #1 : make method finishStory() that go to story feedback and somehow pass statistics to the window so it can be displayed
     def finishStory(self,accuracy,speed):
