@@ -293,6 +293,7 @@ class adminHome(QDialog):
         self.userMngmnt.clicked.connect(self.manageUsers)
         self.uploadStoryButton.clicked.connect(self.uploadStoryPage)
         self.logOut.clicked.connect(self.logOutAdmin)
+        self.profile.setText(username[0])
         # insert selection code
 
     def uploadStoryPage(self):
@@ -327,6 +328,7 @@ class adminUpload(QDialog):
         self.contentField.setWordWrapMode(True)
         self.contentField.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.warn.setVisible(False)
+        self.profile.setText(username[0])
 
     def uploadStory(self):
         title = self.titleField.text()
@@ -362,6 +364,7 @@ class adminUsers(QDialog):
         self.removeUser.clicked.connect(self.removeAUser)
         self.viewUsers.clicked.connect(self.userList)
         self.backButton.clicked.connect(self.goBack)
+        self.profile.setText(username[0])
 
     def addNewUser(self):
         check.append("1")                                           # lets program know admin is trying to add user
@@ -421,6 +424,7 @@ class adminMngmnt(QDialog):
         loadUi("adminMngmnt.ui", self)
         self.label.setText("Users in System")
         self.backButton.clicked.connect(self.goBack)
+        self.profile.setText(username[0])
 
         users = database.child("General Users").get().val()
 
