@@ -578,7 +578,7 @@ class readStory(QDialog):
                 self.total_incorrect_words += len(self.incorrect_words)
                 if self.incorrect_words: # words mispronounced
                     self.storyText.setText(self.incorrect_words[0])
-                    # TODO@b1gRedDoor #13 show pronunciation of incorrect word
+                    self.ipaText.setText(IPAmatching.ipa_transcription(self.incorrect_words[0]))
                     # TODO@b1gRedDoor #14 play audio for correct pronunciation of word
                 elif self.lines: # words correct and story not finished
                     print("fetched next line")
@@ -605,11 +605,11 @@ class readStory(QDialog):
                 if match_list[0][2] == '1': # correct pronunciation
                     self.incorrect_words.pop(0)
                     if self.incorrect_words: # more words to retry
-                        self.storyText.setText(self.incorrect_words[0]) 
-                        # TODO@b1gRedDoor #13 show correct pronunciation
+                        self.storyText.setText(self.incorrect_words[0])
+                        self.ipaText.setText(IPAmatching.ipa_transcription(self.incorrect_words[0]))
                         # TODO@b1gRedDoor #14 play audio
                     else: # mispronounced words finished
-                        # TODO@b1gRedDoor #13 hide pronunciation
+                        self.ipaText.hide()
                         self.skipButton.hide() # prevent the user from skipping after all incorrect words are finished
                         self.storyText.setText(self.lines[0])
                 else: # mispronounced again
@@ -628,7 +628,9 @@ class readStory(QDialog):
         self.incorrect_words.pop(0)
         if self.incorrect_words:
             self.storyText.setText(self.incorrect_words[0])
+            self.ipaText.setText(IPAmatching.ipa_transcription(self.incorrect_words[0]))
         else:
+            self.ipaText.hide()
             self.storyText.setText(self.lines[0])
             self.skipButton.hide()
         self.skipButton.clicked.connect(self.skip)
