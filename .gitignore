@@ -1,5 +1,6 @@
-sentence.wav
 __pycache__/audio_recorder.cpython-311.pyc
 __pycache__/IPAmatching.cpython-311.pyc
 __pycache__/story.cpython-311.pyc
 __pycache__/wav2vec.cpython-311.pyc
+sentence.wav
+lineFeedback.ui
