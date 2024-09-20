@@ -647,12 +647,33 @@ class readStory(QDialog):
                 self.total_words += len(match_list)
                 self.total_incorrect_words += len(self.incorrect_words)
                 if self.incorrect_words: # words mispronounced
+                    # TODO you got {len matchlist - len incorrect}/{len matchlist} right
+                    msg = QMessageBox()
+                    msg.setWindowTitle("Good try")
+                    msg.setText(f"You got {len(match_list) - len(self.incorrect_words)} / {len(match_list)} right :)")
+                    msg.setIcon(QMessageBox.Information)
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.exec_()
                     self.storyText.setText(f"{self.incorrect_words[0]}\n\nPronunciation: {IPAmatching.ipa_transcription(self.incorrect_words[0])}")
                     self.playIPA.show()
                     self.skipButton.show()
                 elif self.lines: # words correct and story not finished
+                    # TODO all correct
+                    msg = QMessageBox()
+                    msg.setWindowTitle("Congratulations")
+                    msg.setText("You got all the words correct!")
+                    msg.setIcon(QMessageBox.Information)
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.exec_()
                     self.storyText.setText(self.lines[0])
                 else: # words correct and story finished
+                    # TODO all correct
+                    msg = QMessageBox()
+                    msg.setWindowTitle("Congratulations")
+                    msg.setText("You got all the words correct!")
+                    msg.setIcon(QMessageBox.Information)
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.exec_()
                     self.recorder.finish_recording()
                     accuracy = (self.total_words - self.total_incorrect_words) / self.total_words
                     speed = (self.total_words - self.total_incorrect_words) / self.model.duration * 60 if self.model.duration != 0 else (self.total_words - self.total_incorrect_words) * 60 # in case for some reason there are words but duration is 0
@@ -667,7 +688,14 @@ class readStory(QDialog):
                     totalDuration = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['duration'] + self.model.duration
                     database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'duration' : totalDuration}) # update with new total duration
             case _: # read mispronounced word
-                if match_list[0][2] == '1': # correct pronunciation 
+                if match_list[0][2] == '1': # correct pronunciation
+                    # TODO you got the word right
+                    msg = QMessageBox()
+                    msg.setWindowTitle("Good job")
+                    msg.setText("You pronounced the word correctly!")
+                    msg.setIcon(QMessageBox.Information)
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.exec_()
                     self.incorrect_words.pop(0)
                     if self.incorrect_words: # more words to retry
                         self.storyText.setText(f"{self.incorrect_words[0]}\n\nPronunciation: {IPAmatching.ipa_transcription(self.incorrect_words[0])}")
@@ -676,7 +704,13 @@ class readStory(QDialog):
                         self.skipButton.hide() # prevent the user from skipping after all incorrect words are finished
                         self.storyText.setText(self.lines[0])
                 else: # mispronounced again
-                    pass
+                    # TODO you got it wrong
+                    msg = QMessageBox()
+                    msg.setWindowTitle("Nice try")
+                    msg.setText("You mispronounced the word.")
+                    msg.setIcon(QMessageBox.Information)
+                    msg.setStandardButtons(QMessageBox.Ok)
+                    msg.exec_()
 
         self.warn.hide()
         self.recordButton.clicked.connect(self.record)
