@@ -530,11 +530,12 @@ class userStats(QDialog):
         duration = database.child('General Users').child(emailAddy[0].replace('.', '%20').replace('@', '%40')).get().val()['duration']
         totalWords = database.child('General Users').child(emailAddy[0].replace('.', '%20').replace('@', '%40')).get().val()['total words']
         totalWrong = database.child('General Users').child(emailAddy[0].replace('.', '%20').replace('@', '%40')).get().val()['wrong words']
-        self.accuracyDisplay.setText(f"Reading Accuracy:\n{(totalWords - totalWrong) / totalWords:.0%}")
+        totalCorrect = totalWords - totalWrong
+        self.accuracyDisplay.setText(f"Reading Accuracy:\n{totalCorrect / totalWords:.0%}")
         if duration == 0: 
             self.speedDisplay.setText(f"Reading Speed:\n0 wpm")
         else: 
-            self.speedDisplay.setText(f"Reading Speed:\n{totalWords/duration*60:.0f} wpm")
+            self.speedDisplay.setText(f"Reading Speed:\n{totalCorrect / duration * 60:.0f} wpm")
         self.backButton.clicked.connect(self.goBack)
         self.resetButton.clicked.connect(self.reset)
     
@@ -635,23 +636,20 @@ class readStory(QDialog):
         ipa_expected = IPAmatching.IPA_correction(IPAmatching.ipa_transcription(sentence))
         match_list = IPAmatching.pronunciation_matching(eng_input[0],ipa_input[0],ipa_expected.split(),sentence)
         
-        match self.incorrect_words:
-            case []: # read sentence
+        match self.incorrect_words: # self.incorrect only ever popped after being read only correct or skipped
+            case []: # sentence was read
                 # word is a list represented as follows: [word,<speech to text value>,<speech to ipa value>]
                 # as you can see in our code, we only ever user the speech to ipa value to
                 # determine if a word is correct or incorrect
                 for word in match_list:
                     if word[2] == '0': # word was pronounced incorrectly
-                        print(f"{word[0]} {word[2]}")
                         self.incorrect_words.append(word[0])
-                print(self.incorrect_words)
                 self.total_words += len(match_list)
                 self.total_incorrect_words += len(self.incorrect_words)
                 if self.incorrect_words: # words mispronounced
                     self.storyText.setText(f"{self.incorrect_words[0]}\n\nPronunciation: {IPAmatching.ipa_transcription(self.incorrect_words[0])}")
                     self.playIPA.show()
                     self.skipButton.show()
-                    # TODO@b1gRedDoor #14 play audio for correct pronunciation of word
                 elif self.lines: # words correct and story not finished
                     self.storyText.setText(self.lines[0])
                 else: # words correct and story finished
@@ -660,6 +658,7 @@ class readStory(QDialog):
                     speed = (self.total_words - self.total_incorrect_words) / self.model.duration * 60 if self.model.duration != 0 else (self.total_words - self.total_incorrect_words) * 60 # in case for some reason there are words but duration is 0
                     self.statistics_signal.emit(accuracy,speed) # creates next window
                     
+                    # database interaction
                     totalWrong = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['wrong words'] + self.total_incorrect_words
                     database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'wrong words' : totalWrong})  # update with new total
                     totalWords = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['total words'] + self.total_words
@@ -703,6 +702,7 @@ class readStory(QDialog):
             speed = (self.total_words - self.total_incorrect_words) / self.model.duration * 60 if self.model.duration != 0 else (self.total_words - self.total_incorrect_words) * 60 # in case for some reason there are words but duration is 0
             self.statistics_signal.emit(accuracy,speed) # creates next window
             
+            # database interaction
             totalWrong = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['wrong words'] + self.total_incorrect_words
             database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'wrong words' : totalWrong})  # update with new total
             totalWords = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['total words'] + self.total_words
@@ -736,6 +736,7 @@ class storyFeedback(QDialog):
         super(storyFeedback, self).__init__()
         loadUi("storyFeedback.ui", self)
         self.home.clicked.connect(self.goHome)
+        self.profile.setText(userName[0])
         if accuracy is not None and speed is not None:
             self.displayFeedback(accuracy,speed)
 
