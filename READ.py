@@ -719,10 +719,10 @@ class readStory(QDialog):
     # if more sentences, display next
     # else call finishStory method
     def skip(self):
-        self.skipButton.clicked.disconnect()
         self.recorder.stop_recording()
+        self.skipButton.clicked.disconnect()
+        self.recordButton.clicked.disconnect()
         self.warn.hide()
-        self.recordButton.clicked.connect(self.record)
         self.incorrect_words.pop(0)
         if self.incorrect_words: # more mispronounced words left
             self.storyText.setText(f"{self.incorrect_words[0]}\n\nPronunciation: {IPAmatching.ipa_transcription(self.incorrect_words[0])}")
@@ -745,6 +745,7 @@ class readStory(QDialog):
             totalDuration = database.child("General Users").child(emailAddy[0].replace(".", "%20")).get().val()['duration'] + self.model.duration
             database.child("General Users").child(emailAddy[0].replace(".", "%20")).update({'duration' : totalDuration}) # update with new total duration    
         self.skipButton.clicked.connect(self.skip)
+        self.recordButton.clicked.connect(self.record)
     
     def say(self):
         self.recorder.stop_recording()
