@@ -45,7 +45,7 @@ font: 14pt &quot;DengXian&quot;;</string>
      <string>Continue</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="firstname">
+   <widget class="QLineEdit" name="teacherID">
     <property name="geometry">
      <rect>
       <x>430</x>
@@ -75,7 +75,7 @@ font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
      <string/>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lastname">
+   <widget class="QLineEdit" name="firstname">
     <property name="geometry">
      <rect>
       <x>430</x>
@@ -89,7 +89,7 @@ font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
 font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lastname_2">
+   <widget class="QLineEdit" name="lastname">
     <property name="geometry">
      <rect>
       <x>430</x>
