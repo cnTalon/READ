@@ -7,4 +7,6 @@ to read; if the reader takes too long, or says the wrong word, assistance should
 correct pronunciation (broken down into sounds) and asking them to try again. Statistics of reading speed 
 and accuracy should also be provided, and reading content recommended based on the current level of 
 reading proficiency. The application will only support reading in English, so that existing resources can be 
-used, but the aim will be to develop a modular system that could be extended to other languages lat
+used, but the aim will be to develop a modular system that could be extended to other languages later
+
+gitlab link: [https://gitlab.cs.uct.ac.za/capstone_reading-tutor-app/read]
