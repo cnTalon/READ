@@ -46,7 +46,7 @@ class Uploader:
 
     def upload_from_dataset(self, dataset, num_rows=None):
         if num_rows:
-            dataset = dataset.select(range(300,500))  # Select the first 'num_rows' rows
+            dataset = dataset.select(num_rows)  # Select the first 'num_rows' rows
 
         for example in dataset:
             content = example.get("text")  # Adjust field name based on dataset
