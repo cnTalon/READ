@@ -10,6 +10,7 @@ packages = [
     "librosa",
     "torch",
     "espeakng"
+    "transformers"
 ]
 
 def installPackages():
