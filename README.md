@@ -10,3 +10,11 @@ reading proficiency. The application will only support reading in English, so th
 used, but the aim will be to develop a modular system that could be extended to other languages later
 
 gitlab link: [https://gitlab.cs.uct.ac.za/capstone_reading-tutor-app/read]
+
+Instructions to run:
+1. clone the repository
+3. open command line
+4. change directory to the repository
+5. enter <python .\installPackages.py>
+2. install Espeak NG on github at [https://github.com/espeak-ng/espeak-ng]
+6. run the application with <python .\READ.py>
