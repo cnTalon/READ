@@ -445,7 +445,8 @@ class adminMngmnt(QDialog):
 
         # goes through all the users in the database
         if users:
-            sumDuration, sumWords, sumWrong = 0, 0, 0
+            statsList = [[0]*2 for _ in range(len(users))]
+            i = 0
             for username, userData in users.items():
                 # gets user statistics
                 first = userData.get('first name')
@@ -454,9 +455,6 @@ class adminMngmnt(QDialog):
                 duration = userData.get('duration')
                 totalWords = userData.get('total words')
                 totalWrong  = userData.get('wrong words')
-                sumDuration += duration
-                sumWords += totalWords
-                sumWrong += totalWrong
 
                 if totalWords == 0:
                     accuracy = 0
@@ -467,18 +465,14 @@ class adminMngmnt(QDialog):
                 else:
                     speed = (totalWords - totalWrong) / duration * 60       # speed = correct words per minute
                 self.list.addItem(f"Full Name: {first} {last} | Email: {email} | Speed: {speed:.0f}wpm | Accuracy: {accuracy:.0%} | Total Words Read: {totalWords}")
-            userCount = len(users)
-            sumWords /= userCount
-            sumWrong /= userCount
-            sumDuration /= userCount
-            if sumWords == 0:
-                avgAcc = 0
-            else:
-                avgAcc = ((sumWords - sumWrong) / sumWords)
-            if sumDuration == 0:
-                avgSpeed = 0
-            else:
-                avgSpeed = (sumWords - sumWrong) / sumDuration * 60
+                statsList[i][0],statsList[i][1] = speed,accuracy
+                i += 1
+            sumSpeed, sumAcc = 0,0
+            for stats in statsList:
+                sumSpeed += stats[0]
+                sumAcc += stats[1]
+            avgSpeed = sumSpeed / (i)
+            avgAcc = sumAcc / (i)
             self.aggregate.setText(f"Aggregate Speed: {avgSpeed:.0f}wpm | Aggregate Accuracy: {avgAcc:.0%}")
         else:
             self.list.addItem("No users found.")
@@ -589,7 +583,7 @@ class readStory(QDialog):
         self.recorder = AudioRecorder()
         self.recorder.start()
         loadUi("readStory.ui", self)
-        contents = database.child("Story Bank").child(title[0]).get().val()['contents']            # grab story contents from database
+        contents = database.child("Story Bank").child(title[0]).get().val()['Contents']            # grab story contents from database
         self.story = Story(contents)
         self.lines = self.story.split_into_sentences()                                             # stores stories line by line
         self.incorrect_words = []
